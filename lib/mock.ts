@@ -1,0 +1,126 @@
+import type { Attestation, Supplier } from "./types";
+
+export const ARBISCAN_BASE = "https://sepolia.arbiscan.io/tx";
+
+export const mockAttestations: Attestation[] = [
+  {
+    uid: "0x7f3a9c1e4b2d48f6a1c5e7d9b3f6a2c4e8d1b5f7a9c3e6d2b8f1a4c6e9d2b5f7",
+    issuer: "PT Sumber Diri Sembilan",
+    issuerWallet: "0x8f3a...9c2e",
+    subjectId: "sup_karyawaha_001",
+    supplierName: "PT Karyawaha Ekamulya",
+    schemaId: "INVOICE_CONFIRMED",
+    invoiceHash: "9f2c41e8b7d34a6f0c19e5d2b87a4f3c1d6e9b0a5f8c3d7e2b6a1f4c9d8e7b6a5",
+    payeeHash: "a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7e8f90",
+    refNo: "INV/2026/VII/0142",
+    issuedAt: "2026-07-20T10:24:00+07:00",
+    expiresAt: "2027-07-20T10:24:00+07:00",
+    status: "CONFIRMED",
+    txHash: "0x3a9c1e4b2d48f6a1c5e7d9b3f6a2c4e8d1b5f7a9c3e6d2b8f1a4c6e9d2b5f7a1",
+  },
+  {
+    uid: "0x2b5f7a1c3e6d2b8f1a4c6e9d2b5f7a9c1e4b2d48f6a1c5e7d9b3f6a2c4e8d1b5",
+    issuer: "PT Sumber Diri Sembilan",
+    issuerWallet: "0x8f3a...9c2e",
+    subjectId: "sup_lautan_002",
+    supplierName: "CV Lautan Atlantik",
+    schemaId: "DELIVERY_CONFIRMED",
+    invoiceHash: "41e8b7d34a6f0c19e5d2b87a4f3c1d6e9b0a5f8c3d7e2b6a1f4c9d8e7b6a59f2c",
+    payeeHash: "b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7e8f90a1",
+    refNo: "INV/2026/VII/0158",
+    issuedAt: "2026-08-02T14:05:00+07:00",
+    expiresAt: null,
+    status: "PENDING_CONFIRMATION",
+    txHash: "0x0000000000000000000000000000000000000000000000000000000000000000",
+  },
+  {
+    uid: "0x9c3e6d2b8f1a4c6e9d2b5f7a9c1e4b2d48f6a1c5e7d9b3f6a2c4e8d1b5f7a12b",
+    issuer: "PT Mayang Sejahtera",
+    issuerWallet: "0x1c5e...77aa",
+    subjectId: "sup_karyawaha_001",
+    supplierName: "PT Karyawaha Ekamulya",
+    schemaId: "INVOICE_CONFIRMED",
+    invoiceHash: "d34a6f0c19e5d2b87a4f3c1d6e9b0a5f8c3d7e2b6a1f4c9d8e7b6a59f2c41e8",
+    payeeHash: "deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+    refNo: "INV/2026/VI/0097",
+    issuedAt: "2026-06-11T09:00:00+07:00",
+    expiresAt: "2026-09-11T09:00:00+07:00",
+    status: "REVOKED",
+    txHash: "0x5f7a9c1e4b2d48f6a1c5e7d9b3f6a2c4e8d1b5f7a9c3e6d2b8f1a4c6e9d2b51",
+    revokeReason: "Rekening tujuan berubah tanpa persetujuan buyer — terindikasi pengalihan.",
+    payeeMismatch: true,
+  },
+  {
+    uid: "0x4c6e9d2b5f7a9c1e4b2d48f6a1c5e7d9b3f6a2c4e8d1b5f7a9c3e6d2b8f1a4c",
+    issuer: "PT Sumber Diri Sembilan",
+    issuerWallet: "0x8f3a...9c2e",
+    subjectId: "sup_makmur_003",
+    supplierName: "PT Makmur Jaya Abadi",
+    schemaId: "INVOICE_CONFIRMED",
+    invoiceHash: "e5d2b87a4f3c1d6e9b0a5f8c3d7e2b6a1f4c9d8e7b6a59f2c41e8b7d34a6f0",
+    payeeHash: "c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2",
+    refNo: "INV/2026/VIII/0003",
+    issuedAt: "2026-08-20T11:40:00+07:00",
+    expiresAt: null,
+    status: "FINANCED",
+    txHash: "0x8f1a4c6e9d2b5f7a9c1e4b2d48f6a1c5e7d9b3f6a2c4e8d1b5f7a9c3e6d2b81",
+  },
+  {
+    uid: "0x1e4b2d48f6a1c5e7d9b3f6a2c4e8d1b5f7a9c3e6d2b8f1a4c6e9d2b5f7a9c3e6",
+    issuer: "PT Sumber Diri Sembilan",
+    issuerWallet: "0x8f3a...9c2e",
+    subjectId: "sup_makmur_003",
+    supplierName: "PT Makmur Jaya Abadi",
+    schemaId: "INVOICE_CONFIRMED",
+    invoiceHash: "f3c1d6e9b0a5f8c3d7e2b6a1f4c9d8e7b6a59f2c41e8b7d34a6f0c19e5d2b87",
+    payeeHash: "d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3",
+    refNo: "INV/2026/V/0031",
+    issuedAt: "2025-05-02T08:00:00+07:00",
+    expiresAt: "2026-05-02T08:00:00+07:00",
+    status: "EXPIRED",
+    txHash: "0x2b8f1a4c6e9d2b5f7a9c1e4b2d48f6a1c5e7d9b3f6a2c4e8d1b5f7a9c3e6d2b",
+  },
+];
+
+export const mockSuppliers: Supplier[] = [
+  {
+    id: "sup_karyawaha_001",
+    name: "PT Karyawaha Ekamulya",
+    wallet: "0x4d2a...c81f",
+    confirmedCount: 14,
+    counterpartyCount: 3,
+    firstActive: "2025-11-02",
+    lastActive: "2026-08-20",
+    revokedCount: 1,
+    pendingCount: 2,
+  },
+  {
+    id: "sup_lautan_002",
+    name: "CV Lautan Atlantik",
+    wallet: "0x77bb...02ad",
+    confirmedCount: 9,
+    counterpartyCount: 2,
+    firstActive: "2026-01-15",
+    lastActive: "2026-08-02",
+    revokedCount: 0,
+    pendingCount: 1,
+  },
+  {
+    id: "sup_makmur_003",
+    name: "PT Makmur Jaya Abadi",
+    wallet: "0x90cc...f4e2",
+    confirmedCount: 22,
+    counterpartyCount: 5,
+    firstActive: "2025-06-10",
+    lastActive: "2026-08-20",
+    revokedCount: 0,
+    pendingCount: 0,
+  },
+];
+
+export function findAttestation(id: string): Attestation | undefined {
+  const q = id.trim().toLowerCase();
+  return mockAttestations.find(
+    (a) => a.uid.toLowerCase() === q || a.uid.toLowerCase().includes(q) || a.refNo.toLowerCase() === q
+  );
+}
