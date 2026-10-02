@@ -1,22 +1,32 @@
 :root {
-  --navy: #061b3a;
-  --navy-dark: #030f24;
-  --navy-mid: #0a224a;
-  --navy-card: #0e2b5c;
-  --blue: #3b72d9;
-  --blue-hover: #295ec0;
-  --cyan: #4ebee6;
-  --cyan-hover: #38b0dc;
-  --cyan-tint: rgba(78, 190, 230, 0.12);
-  --bg: #f6f8fc;
-  --surface: #ffffff;
-  --surface-sub: #f0f4f9;
-  --text: #091b38;
-  --muted: #53657f;
-  --border: #e1e7f0;
-  --border-light: #edf2f7;
-  --primary: #3b72d9;
+  /* DEFINITIVE PRIMARY COLOR SYSTEM (ELECTRIC BLUE) */
+  --primary: #1e50ff;
+  --primary-hover: #1440de;
+  --primary-active: #0f32b5;
   --primary-ink: #ffffff;
+  --primary-subtle: rgba(30, 80, 255, 0.08);
+  --primary-border: rgba(30, 80, 255, 0.25);
+  --primary-glow: rgba(30, 80, 255, 0.28);
+
+  --blue: #1e50ff;
+  --blue-hover: #1440de;
+  --cyan: #00d2ff;
+  --cyan-hover: #00b8e6;
+  --cyan-tint: rgba(0, 210, 255, 0.1);
+
+  --navy: #080d1a;
+  --navy-dark: #050811;
+  --navy-mid: #0e1626;
+  --navy-card: #131e33;
+
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --surface-sub: #f1f5f9;
+  --text: #0f172a;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --border-light: #f1f5f9;
+
   --green: #059669;
   --green-bg: #ecfdf5;
   --green-border: #a7f3d0;
@@ -27,25 +37,35 @@
   --red-bg: #fef2f2;
   --red-border: #fecaca;
   --gray-bg: #f1f5f9;
-  --radius: 12px;
-  --radius-lg: 16px;
+
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 14px;
   --radius-pill: 9999px;
-  --shadow-sm: 0 1px 2px rgba(6, 27, 58, 0.04);
-  --shadow-md: 0 4px 20px -2px rgba(6, 27, 58, 0.07);
-  --shadow-lg: 0 12px 32px -4px rgba(6, 27, 58, 0.12);
-  --shadow-glow: 0 0 25px rgba(78, 190, 230, 0.28);
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 4px 16px -2px rgba(15, 23, 42, 0.06);
+  --shadow-lg: 0 10px 28px -4px rgba(15, 23, 42, 0.1);
 }
 
 :root[data-theme="dark"] {
-  --bg: #030d1c;
-  --surface: #07172e;
-  --surface-sub: #0b1e3b;
-  --text: #f0f4fc;
-  --muted: #92a4bd;
-  --border: #132744;
-  --border-light: #183154;
-  --primary: #4ebee6;
-  --primary-ink: #061b3a;
+  --bg: #080d1a;
+  --surface: #0e1626;
+  --surface-sub: #131e33;
+  --text: #f8fafc;
+  --muted: #8e9bae;
+  --border: #1e293b;
+  --border-light: #182234;
+
+  --primary: #1e50ff;
+  --primary-hover: #3867ff;
+  --primary-active: #1440de;
+  --primary-ink: #ffffff;
+  --primary-subtle: rgba(30, 80, 255, 0.14);
+  --primary-border: rgba(30, 80, 255, 0.35);
+
+  --blue: #1e50ff;
+  --blue-hover: #3867ff;
+
   --green-bg: #06392e;
   --green: #6ee7b7;
   --green-border: #047857;
@@ -55,10 +75,7 @@
   --red-bg: #3f1111;
   --red: #fca5a5;
   --red-border: #991b1b;
-  --gray-bg: #132744;
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
-  --shadow-md: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 12px 32px -4px rgba(0, 0, 0, 0.6);
+  --gray-bg: #131e33;
 }
 
 * {
@@ -1386,15 +1403,15 @@ a {
 }
 
 .bn-btn-primary {
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  background: var(--primary);
   color: #ffffff;
-  border: 1px solid rgba(147, 197, 253, 0.5);
-  font-weight: 700;
-  font-size: 15px;
-  padding: 12px 28px;
-  border-radius: 8px;
-  box-shadow: 0 4px 18px rgba(37, 99, 235, 0.4);
-  transition: all 0.2s ease;
+  border: 1px solid var(--primary);
+  font-weight: 600;
+  font-size: 14px;
+  padding: 10px 24px;
+  border-radius: var(--radius);
+  box-shadow: 0 2px 10px var(--primary-glow);
+  transition: all 0.15s ease;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -1402,21 +1419,20 @@ a {
 }
 
 .bn-btn-primary:hover {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(37, 99, 235, 0.55);
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+  box-shadow: 0 4px 16px var(--primary-glow);
 }
 
 .bn-btn-outline {
-  background: rgba(15, 23, 42, 0.6);
+  background: transparent;
   color: #e2e8f0;
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   font-weight: 600;
-  font-size: 15px;
-  padding: 12px 26px;
-  border-radius: 8px;
-  backdrop-filter: blur(8px);
-  transition: all 0.2s ease;
+  font-size: 14px;
+  padding: 10px 22px;
+  border-radius: var(--radius);
+  transition: all 0.15s ease;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -1424,88 +1440,79 @@ a {
 }
 
 .bn-btn-outline:hover {
-  background: rgba(30, 41, 59, 0.8);
-  border-color: rgba(96, 165, 250, 0.5);
-  color: #60a5fa;
-  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: #ffffff;
 }
 
-/* Binance 24h Stats / KPI Ticker Strip */
-.bn-stats-grid {
+/* Binance 24h Stats Ribbon (No Cards - Clean Inline Numbers) */
+.bn-stats-ribbon {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  max-width: 1040px;
+  max-width: 960px;
   margin: 0 auto;
-}
-
-.bn-stat-card {
-  background: rgba(13, 22, 41, 0.7);
-  border: 1px solid rgba(59, 130, 246, 0.16);
-  border-radius: 12px;
-  padding: 18px 20px;
+  padding: 32px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   text-align: left;
-  backdrop-filter: blur(12px);
-  transition: border-color 0.2s ease;
 }
 
-.bn-stat-card:hover {
-  border-color: rgba(96, 165, 250, 0.4);
+.bn-stat-col {
+  padding: 0 20px;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.bn-stat-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 6px;
+.bn-stat-col:first-child {
+  padding-left: 0;
 }
 
-.bn-stat-title {
-  color: #94a3b8;
+.bn-stat-col:last-child {
+  border-right: none;
+}
+
+.bn-stat-label {
+  color: #8e9bae;
   font-size: 12px;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .bn-stat-trend {
   color: #10b981;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
-  background: rgba(16, 185, 129, 0.12);
-  padding: 2px 6px;
-  border-radius: 4px;
 }
 
-.bn-stat-value {
+.bn-stat-number {
   color: #ffffff;
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 800;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  margin-bottom: 4px;
+  letter-spacing: -0.02em;
+  margin-bottom: 2px;
 }
 
-.bn-stat-sub {
+.bn-stat-note {
   color: #64748b;
   font-size: 11px;
 }
 
 /* Binance Market / Attestation Ledger Section */
 .bn-ledger-section {
-  padding: 64px 0 80px;
+  padding: 56px 0 72px;
   background: var(--bg);
 }
 
 .bn-ledger-container {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 16px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05);
+  border-radius: var(--radius-lg);
   overflow: hidden;
 }
 
 .bn-ledger-header {
-  padding: 24px 28px 18px;
+  padding: 20px 24px;
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
@@ -1515,9 +1522,9 @@ a {
 }
 
 .bn-ledger-title-group h2 {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 800;
-  margin: 0 0 4px;
+  margin: 0 0 2px;
   color: var(--text);
 }
 
@@ -1529,10 +1536,10 @@ a {
 
 .bn-tabs-nav {
   display: flex;
-  gap: 6px;
+  gap: 4px;
   background: var(--surface-sub);
-  padding: 4px;
-  border-radius: 10px;
+  padding: 3px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border);
 }
 
@@ -1540,18 +1547,18 @@ a {
   background: transparent;
   border: none;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
-  padding: 6px 14px;
-  border-radius: 7px;
+  padding: 5px 12px;
+  border-radius: 4px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
 .bn-tab-button.active {
   background: var(--surface);
-  color: var(--blue);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  color: var(--primary);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 }
 
 /* Binance Table Layout */
@@ -1568,10 +1575,10 @@ a {
 }
 
 .bn-table th {
-  padding: 14px 24px;
+  padding: 12px 20px;
   color: var(--muted);
   font-weight: 600;
-  font-size: 12px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   background: var(--surface-sub);
@@ -1579,13 +1586,13 @@ a {
 }
 
 .bn-table td {
-  padding: 16px 24px;
+  padding: 14px 20px;
   border-bottom: 1px solid var(--border);
   vertical-align: middle;
 }
 
 .bn-table tr:hover td {
-  background: rgba(59, 130, 246, 0.04);
+  background: var(--primary-subtle);
 }
 
 .bn-org-cell {
@@ -1595,165 +1602,228 @@ a {
 }
 
 .bn-org-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: rgba(37, 99, 235, 0.12);
-  color: var(--blue);
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: var(--primary-subtle);
+  color: var(--primary);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 13px;
+  font-size: 12px;
   flex-shrink: 0;
 }
 
 .bn-badge {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 3px 10px;
-  border-radius: 6px;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 4px;
   font-size: 11px;
   font-weight: 700;
 }
 
 .bn-badge-valid {
-  background: rgba(16, 185, 129, 0.12);
+  background: rgba(16, 185, 129, 0.1);
   color: #10b981;
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  border: 1px solid rgba(16, 185, 129, 0.25);
 }
 
 .bn-badge-financed {
-  background: rgba(37, 99, 235, 0.12);
-  color: #3b82f6;
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  background: var(--primary-subtle);
+  color: var(--primary);
+  border: 1px solid var(--primary-border);
 }
 
 .bn-badge-mismatch {
-  background: rgba(245, 158, 11, 0.12);
+  background: rgba(245, 158, 11, 0.1);
   color: #f59e0b;
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  border: 1px solid rgba(245, 158, 11, 0.25);
 }
 
 .bn-badge-revoked {
-  background: rgba(239, 68, 68, 0.12);
+  background: rgba(239, 68, 68, 0.1);
   color: #ef4444;
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  border: 1px solid rgba(239, 68, 68, 0.25);
 }
 
-/* Binance 4-Step Process Section */
-.bn-process-section {
-  padding: 80px 0;
-  background: var(--surface-sub);
+/* Clean Roles Grid (Minimal 2x2, No heavy nesting) */
+.bn-roles-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-top: 36px;
+}
+
+.bn-role-row {
+  display: flex;
+  gap: 16px;
+  padding: 20px;
+  border-left: 3px solid var(--primary);
+  background: var(--surface);
+  border-radius: 0 var(--radius) var(--radius) 0;
   border-top: 1px solid var(--border);
+  border-right: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
 }
 
-.bn-process-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  position: relative;
+.bn-role-icon {
+  font-size: 24px;
+  flex-shrink: 0;
 }
 
-.bn-step-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 24px;
-  position: relative;
-  transition: all 0.25s ease;
-}
-
-.bn-step-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--blue);
-  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.12);
-}
-
-.bn-step-number {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: var(--blue);
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  font-size: 14px;
-  margin-bottom: 16px;
-}
-
-.bn-step-title {
+.bn-role-title {
   font-size: 16px;
   font-weight: 700;
-  margin: 0 0 8px;
+  margin: 0 0 4px;
   color: var(--text);
 }
 
-.bn-step-desc {
+.bn-role-desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 0 0 10px;
+}
+
+/* Clean Flow Sequence (No Chunky Cards - Pure Timeline Flow) */
+.bn-flow-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-top: 36px;
+  position: relative;
+}
+
+.bn-flow-col {
+  padding-right: 12px;
+  border-top: 2px solid var(--border);
+  padding-top: 18px;
+  position: relative;
+}
+
+.bn-flow-col:hover {
+  border-top-color: var(--primary);
+}
+
+.bn-flow-idx {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 6px;
+  letter-spacing: 0.05em;
+}
+
+.bn-flow-heading {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 6px;
+}
+
+.bn-flow-text {
   font-size: 13px;
   color: var(--muted);
   line-height: 1.5;
   margin: 0;
 }
 
-/* Binance SAFU Trust Banner */
-.bn-safu-card {
-  background: linear-gradient(135deg, rgba(8, 15, 30, 0.95) 0%, rgba(17, 34, 69, 0.95) 100%);
-  border: 1px solid rgba(59, 130, 246, 0.35);
-  border-radius: 18px;
-  padding: 40px;
-  color: #ffffff;
-  margin: 64px 0 20px;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.2);
-}
-
-.bn-safu-grid {
+/* Open 2-Column Trust Section (No Box-in-Box Cards) */
+.bn-trust-section {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 28px;
-  margin-top: 28px;
+  grid-template-columns: 1fr 2fr;
+  gap: 48px;
+  padding: 64px 0;
+  border-top: 1px solid var(--border);
+  align-items: flex-start;
 }
 
-.bn-safu-item {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 20px;
-}
-
-.bn-safu-item h4 {
-  color: #60a5fa;
+.bn-trust-intro h3 {
+  font-size: 24px;
+  font-weight: 800;
   margin: 0 0 8px;
-  font-size: 15px;
+  color: var(--text);
 }
 
-.bn-safu-item p {
-  color: #cbd5e1;
+.bn-trust-intro p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.bn-trust-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.bn-trust-row {
+  display: flex;
+  gap: 20px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.bn-trust-row:first-child {
+  padding-top: 0;
+}
+
+.bn-trust-row:last-child {
+  border-bottom: none;
+}
+
+.bn-trust-num {
   font-size: 13px;
+  font-weight: 700;
+  color: var(--primary);
+  width: 24px;
+  flex-shrink: 0;
+}
+
+.bn-trust-body h4 {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0 0 4px;
+  color: var(--text);
+}
+
+.bn-trust-body p {
+  font-size: 13px;
+  color: var(--muted);
   line-height: 1.5;
   margin: 0;
 }
 
 @media (max-width: 992px) {
-  .bn-stats-grid,
-  .bn-process-grid,
-  .bn-safu-grid {
+  .bn-stats-ribbon,
+  .bn-flow-strip {
     grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+  .bn-roles-grid,
+  .bn-trust-section {
+    grid-template-columns: 1fr;
+    gap: 32px;
   }
 }
 
 @media (max-width: 640px) {
-  .bn-stats-grid,
-  .bn-process-grid,
-  .bn-safu-grid {
+  .bn-stats-ribbon,
+  .bn-flow-strip {
     grid-template-columns: 1fr;
+  }
+  .bn-stat-col {
+    padding: 0;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 16px;
+    margin-bottom: 16px;
   }
   .bn-ticker-metrics {
     display: none;
   }
 }
+
 
