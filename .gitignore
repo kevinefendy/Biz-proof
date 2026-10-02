@@ -3,3 +3,6 @@ node_modules/
 out/
 *.log
 .DS_Store
+tsconfig.tsbuildinfo
+template-fe-arbitrum-workshop/
+.env*.local
