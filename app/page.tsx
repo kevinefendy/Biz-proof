@@ -1,450 +1,119 @@
 "use client";
-import { useState } from "react";
+
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { useApp } from "@/components/AppProvider";
 import { dict } from "@/lib/i18n";
 import VerifyInputBox from "@/components/VerifyInputBox";
-import AttestationCard from "@/components/AttestationCard";
 import { mockAttestations, ARBISCAN_BASE } from "@/lib/mock";
+import { ARBITRUM_SEPOLIA_EXPLORER } from "@/lib/contracts/bizproof";
+import type { InvoiceStatus } from "@/lib/types";
 
-type AudienceKey = "lender" | "buyer" | "supplier" | "auditor";
-
-interface AudienceContent {
-  title: string;
-  lead: string;
-  tools: { title: string; desc: string }[];
-  benefits: { title: string; desc: string }[];
-}
-
-const audienceData: Record<AudienceKey, AudienceContent> = {
-  lender: {
-    title: "Bank & Lembaga Pembiayaan",
-    lead: "Verifikasi keaslian piutang usaha (invoice) dalam hitungan milidetik sebelum pencairan dana factoring atau pinjaman modal kerja, serta cegah double financing dengan registry on-chain terdesentralisasi.",
-    tools: [
-      {
-        title: "Pencocokan Hash Dokumen",
-        desc: "Bandingkan hash PDF/e-faktur invoice dengan attestation resmi pembeli tanpa perlu menelepon bagian purchasing buyer.",
-      },
-      {
-        title: "Registry Status FINANCED",
-        desc: "Tandai invoice yang sedang dibiayai untuk mencegah penipuan pengajuan pinjaman ganda (double pledge) di institusi lain.",
-      },
-      {
-        title: "Deteksi Payee Mismatch",
-        desc: "Peringatan dini otomatis jika nomor rekening pencairan berbeda dengan rekening resmi yang diakui pembeli.",
-      },
-    ],
-    benefits: [
-      {
-        title: "Pangkas Waktu SLA Pencairan",
-        desc: "Pencairan dana yang biasanya butuh 3-7 hari verifikasi manual kini dapat diputuskan dalam hitungan menit.",
-      },
-      {
-        title: "Zero Fraud Invoice Fiktif",
-        desc: "Hanya invoice yang sah ditandatangani oleh key pembeli terverifikasi yang dapat diproses pembiayaannya.",
-      },
-      {
-        title: "Integrasi REST API & Webhook",
-        desc: "Koneksikan mesin verifikasi BizProof langsung ke core banking system dan credit assessment engine Anda.",
-      },
-    ],
-  },
-  buyer: {
-    title: "Enterprise & Korporasi Pembeli",
-    lead: "Lindungi nama baik dan reputasi perusahaan dari penerbitan invoice fiktif atas nama entitas Anda. Berdayakan rantai pasok dengan konfirmasi tagihan yang transparan dan cepat.",
-    tools: [
-      {
-        title: "Multi-Tier Approval Policy",
-        desc: "Atur kewenangan approver berdasarkan nilai tagihan (misal: PM < Rp 100jt, Finance Director > Rp 500jt).",
-      },
-      {
-        title: "Gasless Confirmation",
-        desc: "Konfirmasi tagihan dengan tanda tangan digital tanpa perlu menyimpan mata uang crypto (relayer menanggung gas fee).",
-      },
-      {
-        title: "Audit Log & Hak Revoke",
-        desc: "Lacak seluruh jejak aktivitas verifikasi tim dan batalkan attestation jika terjadi retur barang atau sengketa.",
-      },
-    ],
-    benefits: [
-      {
-        title: "Cegah Fraud Vendor Internal",
-        desc: "Menutup celah kolusi vendor dengan tim pengadaan melalui validasi kriptografis yang tidak dapat diubah.",
-      },
-      {
-        title: "Hubungan Supplier Lebih Kuat",
-        desc: "Membantu supplier rekanan memperoleh pembiayaan invoice lebih cepat dengan suku bunga yang lebih bersaing.",
-      },
-      {
-        title: "Otomasi Integrasi ERP",
-        desc: "Sinkronisasi otomatis dengan SAP, Oracle, atau Odoo via Webhook event status konfirmasi invoice.",
-      },
-    ],
-  },
-  supplier: {
-    title: "Supplier & Vendor UMKM",
-    lead: "Ubah piutang usaha yang belum jatuh tempo menjadi modal kerja cair. Bangun reputasi performa pembayaran yang terverifikasi dan portabel untuk memperoleh pembiayaan berbiaya rendah.",
-    tools: [
-      {
-        title: "Hashing Dokumen di Browser",
-        desc: "Hitung SHA-256 + salt langsung di browser Anda. Dokumen rahasia tidak pernah dikirim ke server luar.",
-      },
-      {
-        title: "Supplier Passport Portabel",
-        desc: "Halaman portofolio terpusat yang merangkum skor pembayaran tepat waktu dan total volume invoice yang diselesaikan.",
-      },
-      {
-        title: "Tracking Status Real-Time",
-        desc: "Pantau saat pembeli menerima tagihan, menyetujui on-chain, atau saat lender membiayai invoice Anda.",
-      },
-    ],
-    benefits: [
-      {
-        title: "Bebas Biaya Gas (100% Gratis)",
-        desc: "UMKM tidak perlu membeli token Arbitrum atau ETH; seluruh biaya submission ditanggung relayer.",
-      },
-      {
-        title: "Bunga Pinjaman Lebih Ringan",
-        desc: "Bank memberikan suku bunga lebih rendah karena risiko kredit terkonfirmasi langsung oleh buyer bonafide.",
-      },
-      {
-        title: "Kedaulatan Data Bisnis",
-        desc: "Rekam jejak kepatuhan adalah aset Anda yang dapat dibawa ke bank mana pun tanpa keterikatan satu platform.",
-      },
-    ],
-  },
-  auditor: {
-    title: "Auditor & Regulator",
-    lead: "Jejak audit on-chain yang tidak dapat dimanipulasi (immutable audit trail). Validasi kepatuhan transaksi, pajak, dan pengadaan tanpa perlu sampling dokumen manual yang rentan kesalahan.",
-    tools: [
-      {
-        title: "Pemeriksaan Arbiscan Terbuka",
-        desc: "Setiap attestation memiliki bukti transaksi publik di Arbitrum Sepolia yang dapat diinspeksi oleh siapa pun.",
-      },
-      {
-        title: "Timestamp Kriptografis EAS",
-        desc: "Membuktikan secara pasti kapan invoice diserahkan, kapan disetujui, dan kapan dana dicairkan tanpa manipulasi tanggal.",
-      },
-      {
-        title: "Integritas Hash Tanpa Raw Data",
-        desc: "Memastikan dokumen fisik tidak diubah satu karakter pun tanpa perlu mengakses rahasia harga dan rincian item dagang.",
-      },
-    ],
-    benefits: [
-      {
-        title: "Proses Audit Jauh Lebih Cepat",
-        desc: "Verifikasi sampel ribuan transaksi secara instan lewat skrip atau API tanpa memeriksa lembaran fisik kertas.",
-      },
-      {
-        title: "Bukti Hukum Kuat",
-        desc: "Attestation ditandatangani dengan private key resmi pembeli yang diakui sebagai tandatangan digital sah.",
-      },
-      {
-        title: "Kepatuhan Regulasi Anti-Fraud",
-        desc: "Memenuhi rekomendasi tata kelola pengadaan barang dan jasa anti-suap dan anti-faktur fiktif.",
-      },
-    ],
-  },
-};
+type LedgerFilter = "ALL" | "CONFIRMED" | "FINANCED" | "MISMATCH" | "REVOKED";
 
 export default function Home() {
   const { lang } = useApp();
   const t = dict[lang];
-  const [activeAudience, setActiveAudience] = useState<AudienceKey>("lender");
-  const [copiedHash, setCopiedHash] = useState(false);
 
-  const activeContent = audienceData[activeAudience];
+  const [ledgerFilter, setLedgerFilter] = useState<LedgerFilter>("ALL");
+  const [searchLedger, setSearchLedger] = useState("");
 
-  function copySampleHash() {
-    navigator.clipboard.writeText("0x7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069");
-    setCopiedHash(true);
-    setTimeout(() => setCopiedHash(false), 2000);
-  }
+  // Filter attestation ledger data
+  const filteredAttestations = useMemo(() => {
+    return mockAttestations.filter((a) => {
+      // Filter tab
+      if (ledgerFilter === "CONFIRMED" && a.status !== "CONFIRMED") return false;
+      if (ledgerFilter === "FINANCED" && a.status !== "FINANCED") return false;
+      if (ledgerFilter === "MISMATCH" && !a.payeeMismatch) return false;
+      if (ledgerFilter === "REVOKED" && a.status !== "REVOKED") return false;
+
+      // Filter search
+      if (searchLedger.trim()) {
+        const query = searchLedger.toLowerCase();
+        const matchUid = a.uid.toLowerCase().includes(query);
+        const matchRef = a.refNo.toLowerCase().includes(query);
+        const matchBuyer = a.issuer.toLowerCase().includes(query);
+        const matchSupplier = a.supplierName.toLowerCase().includes(query);
+        const matchHash = a.invoiceHash.toLowerCase().includes(query);
+        return matchUid || matchRef || matchBuyer || matchSupplier || matchHash;
+      }
+      return true;
+    });
+  }, [ledgerFilter, searchLedger]);
 
   return (
     <div className="full-bleed">
-      {/* 1. HERO BANNER (LEXIFI STYLE) */}
-      <section className="lexi-hero">
-        <div className="container">
-          <div className="lexi-hero-grid">
-            <div>
-              <div className="lexi-hero-badge">
-                <span className="dot-cyan">●</span> Arbitrum Sepolia · Ethereum Attestation Service (EAS)
-              </div>
-              <h1>
-                {t.hero_title}
-                <span className="dot-cyan">.</span>
-              </h1>
-              <p className="lexi-hero-desc">{t.hero_sub}</p>
+      {/* 1. BINANCE-STYLE HERO SECTION */}
+      <section className="bn-hero-section">
+        <div className="bn-hero-glow-orb" />
+        <div className="container bn-hero-content">
+          <div className="bn-hero-badge">
+            <span className="bn-pulse-dot" />
+            <span>Arbitrum Sepolia L2 • Zero Raw Upload • Anti Double-Financing</span>
+          </div>
 
-              <div className="lexi-hero-actions">
-                <a href="#verify-sandbox" className="btn secondary pill">
-                  {t.hero_cta_verify}
-                </a>
-                <Link href="/supplier/invoices/new" className="btn outline-white pill">
-                  {t.hero_cta_submit}
-                </Link>
-                <Link href="/app/overview" className="btn ghost" style={{ color: "#ffffff", fontSize: 13 }}>
-                  Portal Pembeli →
-                </Link>
-              </div>
+          <h1 className="bn-hero-title">
+            Protokol <span className="gradient-text">Konfirmasi Invoice</span>
+            <br />
+            Terdesentralisasi.
+          </h1>
 
-              <div className="lexi-hero-metrics">
-                <div className="lexi-metric-item">
-                  <strong>0 Gas Fee</strong>
-                  <span>Gasless relayer untuk supplier</span>
-                </div>
-                <div className="lexi-metric-item">
-                  <strong>100% In-Browser</strong>
-                  <span>Privasi SHA-256 lokal</span>
-                </div>
-                <div className="lexi-metric-item">
-                  <strong>Instant Arbiscan</strong>
-                  <span>Verifikasi terbuka tanpa login</span>
-                </div>
+          <p className="bn-hero-desc">
+            Verifikasi keabsahan piutang bisnis dalam hitungan detik. Lindungi perbankan dan korporasi dari
+            risiko <strong>invoice fiktif</strong>, <strong>double financing</strong>, dan pengalihan rekening sales secara instan.
+          </p>
+
+          <div className="bn-hero-actions">
+            <a href="#verify-sandbox" className="bn-btn-primary">
+              ⚡ Coba Verifikasi Gratis
+            </a>
+            <Link href="/app/overview" className="bn-btn-outline">
+              🏢 Jelajahi Portal Buyer →
+            </Link>
+          </div>
+
+          {/* 24h Stats / KPI Ticker Strip */}
+          <div className="bn-stats-grid">
+            <div className="bn-stat-card">
+              <div className="bn-stat-header">
+                <span className="bn-stat-title">Attestation Aktif</span>
+                <span className="bn-stat-trend">+18.4%</span>
               </div>
+              <div className="bn-stat-value">1,420+</div>
+              <div className="bn-stat-sub">Tercatat di Arbitrum Sepolia</div>
             </div>
 
-            {/* Interactive Live EAS Showcase Widget */}
-            <div>
-              <div className="lexi-preview-card">
-                <div className="lexi-preview-header">
-                  <div className="lexi-preview-live">
-                    <span className="lexi-preview-pulse"></span>
-                    <span>Live EAS Proof</span>
-                  </div>
-                  <span className="badge badge-valid">✓ CONFIRMED (VALID)</span>
-                </div>
-
-                <div className="lexi-preview-row">
-                  <span className="lexi-preview-label">Attestation ID</span>
-                  <span className="lexi-preview-value mono">att_01_inv_99812</span>
-                </div>
-                <div className="lexi-preview-row">
-                  <span className="lexi-preview-label">Buyer (Issuer)</span>
-                  <span className="lexi-preview-value">PT Telkom Indonesia Tbk</span>
-                </div>
-                <div className="lexi-preview-row">
-                  <span className="lexi-preview-label">Supplier Submitter</span>
-                  <span className="lexi-preview-value">CV Karyawaha Mandiri</span>
-                </div>
-                <div className="lexi-preview-row">
-                  <span className="lexi-preview-label">Nomor Invoice</span>
-                  <span className="lexi-preview-value mono">INV-2026-0881</span>
-                </div>
-                <div className="lexi-preview-row">
-                  <span className="lexi-preview-label">Rekening Pembayaran</span>
-                  <span className="lexi-preview-value" style={{ color: "#34d399" }}>
-                    BCA 8820-192-881 (MATCHED)
-                  </span>
-                </div>
-
-                <div className="lexi-preview-hash-box">
-                  <div style={{ overflow: "hidden" }}>
-                    <div style={{ color: "rgba(255,255,255,0.6)", fontSize: 11 }}>Dokumen SHA-256 Hash</div>
-                    <code className="mono" style={{ color: "var(--cyan)", fontSize: 12 }}>
-                      0x7f83b165...126d9069
-                    </code>
-                  </div>
-                  <button type="button" className="lexi-copy-btn" onClick={copySampleHash}>
-                    {copiedHash ? "Tersalin ✓" : "Salin Hash"}
-                  </button>
-                </div>
-
-                <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
-                  <Link
-                    href="/verify/att_01_inv_99812"
-                    className="btn primary sm"
-                    style={{ flex: 1, textAlign: "center" }}
-                  >
-                    Buka Detail Verifikasi ↗
-                  </Link>
-                  <a
-                    href={`${ARBISCAN_BASE}/0x1111111111111111111111111111111111111111111111111111111111111111`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="btn outline-white sm"
-                  >
-                    Arbiscan ↗
-                  </a>
-                </div>
+            <div className="bn-stat-card">
+              <div className="bn-stat-header">
+                <span className="bn-stat-title">Volume Terverifikasi</span>
+                <span className="bn-stat-trend">Live</span>
               </div>
+              <div className="bn-stat-value">Rp 48.2 M</div>
+              <div className="bn-stat-sub">Total nilai tagihan terkonfirmasi</div>
+            </div>
+
+            <div className="bn-stat-card">
+              <div className="bn-stat-header">
+                <span className="bn-stat-title">Pencegahan Double-Financing</span>
+                <span className="bn-stat-trend">100%</span>
+              </div>
+              <div className="bn-stat-value">0 Insiden</div>
+              <div className="bn-stat-sub">Registry hash unik on-chain</div>
+            </div>
+
+            <div className="bn-stat-card">
+              <div className="bn-stat-header">
+                <span className="bn-stat-title">Kecepatan Verifikasi</span>
+                <span className="bn-stat-trend">&lt; $0.001</span>
+              </div>
+              <div className="bn-stat-value">&lt; 1 Detik</div>
+              <div className="bn-stat-sub">Client hashing + Arbitrum RPC</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 2. LEXIFI 5 PILLARS / SERVICES STRIP */}
-      <section className="lexi-services-strip">
-        <div className="container">
-          <div className="lexi-services-grid">
-            <div className="lexi-service-card">
-              <span className="lexi-service-icon">🔒</span>
-              <h3 className="lexi-service-title">1. Manage</h3>
-              <p className="lexi-service-desc">
-                Hash dihitung lokal di browser (SHA-256 + salt). Dokumen rahasia Anda tidak pernah keluar ke server publik.
-              </p>
-            </div>
-
-            <div className="lexi-service-card">
-              <span className="lexi-service-icon">✍️</span>
-              <h3 className="lexi-service-title">2. Confirm</h3>
-              <p className="lexi-service-desc">
-                Pembeli meninjau tagihan dan menandatangani status penerimaan secara digital on-chain di Arbitrum.
-              </p>
-            </div>
-
-            <div className="lexi-service-card">
-              <span className="lexi-service-icon">⚡</span>
-              <h3 className="lexi-service-title">3. Verify</h3>
-              <p className="lexi-service-desc">
-                Bank, lender & auditor dapat mengecek keabsahan attestation dan integritas dokumen dalam hitungan detik tanpa login.
-              </p>
-            </div>
-
-            <div className="lexi-service-card">
-              <span className="lexi-service-icon">🛡️</span>
-              <h3 className="lexi-service-title">4. Protect</h3>
-              <p className="lexi-service-desc">
-                Peringatan dini otomatis jika nomor rekening tujuan pembayaran berbeda dengan yang disepakati pembeli (Payee Mismatch).
-              </p>
-            </div>
-
-            <div className="lexi-service-card">
-              <span className="lexi-service-icon">📈</span>
-              <h3 className="lexi-service-title">5. Upgrade</h3>
-              <p className="lexi-service-desc">
-                Supplier Passport membangun rekam jejak performa terverifikasi untuk akses pembiayaan yang lebih cepat dan murah.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. LEXIFI "ONE TECHNOLOGY, TWO PRODUCTS" SECTION */}
-      <section className="lexi-two-products">
-        <div className="container">
-          <div className="lexi-two-grid">
-            <div className="lexi-two-headline">
-              <h2>
-                Satu protokol terpercaya<span className="dot-cyan">,</span>
-                <br />
-                dua solusi terintegrasi<span className="dot-cyan">.</span>
-              </h2>
-              <p>
-                BizProof menyatukan alur kerja bisnis harian dengan transparansi kriptografi terdesentralisasi.
-                Tidak perlu mengubah format invoice Anda — cukup integrasikan bukti konfirmasinya.
-              </p>
-            </div>
-
-            <div className="lexi-product-cards">
-              <div className="lexi-product-card">
-                <span className="lexi-product-badge">PORTAL PENGADAAN & VENDOR</span>
-                <h3 className="lexi-product-title">
-                  BizProof
-                  <br />
-                  Business Portal
-                </h3>
-                <hr className="lexi-product-divider" />
-                <div className="lexi-product-body">
-                  Solusi terpusat untuk Enterprise Buyer & Supplier untuk submit invoice hash, menyetujui tagihan,
-                  mengelola approver policy multi-tier, dan melacak seluruh rekam jejak pembayaran bisnis.
-                </div>
-                <Link href="/app/overview" className="lexi-product-link">
-                  Jelajahi Portal Buyer →
-                </Link>
-              </div>
-
-              <div className="lexi-product-card">
-                <span className="lexi-product-badge">MESIN VERIFIKASI & API</span>
-                <h3 className="lexi-product-title">
-                  BizProof
-                  <br />
-                  Verifier Engine
-                </h3>
-                <hr className="lexi-product-divider" />
-                <div className="lexi-product-body">
-                  Komponen verifikasi instan untuk Perbankan, Fintek Lending, dan Auditor. Dilengkapi registry status
-                  FINANCED untuk cegah double financing, batch verification, dan integrasi REST API instan.
-                </div>
-                <Link href="/verify" className="lexi-product-link">
-                  Coba Verifikasi Publik →
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 4. LEXIFI INTERACTIVE AUDIENCE TABS SECTION */}
-      <section className="lexi-tabs-section">
-        <div className="container">
-          <h2 className="lexi-tabs-title">
-            Teknologi BizProof dirancang untuk<span className="dot-cyan">:</span>
-          </h2>
-
-          <div className="lexi-nav-tabs">
-            <button
-              type="button"
-              className={`lexi-tab-btn ${activeAudience === "lender" ? "active" : ""}`}
-              onClick={() => setActiveAudience("lender")}
-            >
-              🏦 Bank & Lender
-            </button>
-            <button
-              type="button"
-              className={`lexi-tab-btn ${activeAudience === "buyer" ? "active" : ""}`}
-              onClick={() => setActiveAudience("buyer")}
-            >
-              🏢 Enterprise Buyer
-            </button>
-            <button
-              type="button"
-              className={`lexi-tab-btn ${activeAudience === "supplier" ? "active" : ""}`}
-              onClick={() => setActiveAudience("supplier")}
-            >
-              🏭 Supplier & UMKM
-            </button>
-            <button
-              type="button"
-              className={`lexi-tab-btn ${activeAudience === "auditor" ? "active" : ""}`}
-              onClick={() => setActiveAudience("auditor")}
-            >
-              🔍 Auditor & Regulator
-            </button>
-          </div>
-
-          <div className="lexi-tab-content-grid">
-            <p className="lexi-tab-lead">{activeContent.lead}</p>
-
-            <div>
-              <div className="lexi-tab-subheading">FITUR & ALAT KERJA (TOOLS)</div>
-              <div className="lexi-feature-grid">
-                {activeContent.tools.map((item, idx) => (
-                  <div key={idx} className="lexi-feature-card">
-                    <h4>{item.title}</h4>
-                    <p>{item.desc}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <div className="lexi-tab-subheading">MANFAAT STRATEGIS (BENEFITS)</div>
-              <div className="lexi-feature-grid">
-                {activeContent.benefits.map((item, idx) => (
-                  <div key={idx} className="lexi-feature-card" style={{ borderColor: "rgba(59, 114, 217, 0.2)" }}>
-                    <h4 style={{ color: "var(--blue)" }}>✓ {item.title}</h4>
-                    <p>{item.desc}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 5. VERIFICATION SANDBOX */}
+      {/* 2. UNIFIED SEARCH & VERIFICATION SANDBOX */}
       <section className="lexi-verify-section" id="verify-sandbox">
         <div className="container">
           <div className="center" style={{ marginBottom: 32 }}>
@@ -452,11 +121,10 @@ export default function Home() {
               Mesin Verifikasi Bebas Hambatan
             </span>
             <h2 style={{ fontSize: "clamp(26px, 3vw, 36px)", margin: "0 0 10px", fontWeight: 800 }}>
-              {t.verify_title}
-              <span className="dot-cyan">.</span>
+              Cek Keaslian Tagihan & Rekening<span className="dot-cyan">.</span>
             </h2>
             <p className="muted" style={{ maxWidth: 600, margin: "0 auto" }}>
-              {t.verify_sub}
+              Masukkan UID attestation atau uji file invoice Anda secara aman. File tidak pernah meninggalkan peramban.
             </p>
           </div>
 
@@ -466,31 +134,343 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 6. RECENT ATTESTATIONS GRID */}
-      <section className="lexi-recent-section">
+      {/* 3. BINANCE-STYLE "LIVE ATTESTATION LEDGER" (MARKETS TABLE) */}
+      <section className="bn-ledger-section">
         <div className="container">
-          <div className="row-between" style={{ marginBottom: 24 }}>
-            <div>
-              <h2 style={{ fontSize: 24, fontWeight: 800, margin: 0 }}>
-                Attestation Terkonfirmasi Terbaru<span className="dot-cyan">.</span>
-              </h2>
-              <p className="muted small" style={{ margin: "4px 0 0" }}>
-                Data mock tersimpan di Arbitrum Sepolia testnet dengan schema standar EAS.
-              </p>
+          <div className="bn-ledger-container">
+            {/* Table Header & Tabs */}
+            <div className="bn-ledger-header">
+              <div className="bn-ledger-title-group">
+                <h2>
+                  Buku Besar Attestation Terkonfirmasi<span className="dot-cyan">.</span>
+                </h2>
+                <p>Data transaksi on-chain tersinkronisasi dengan Arbitrum Sepolia Testnet.</p>
+              </div>
+
+              <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+                {/* Search in Ledger */}
+                <input
+                  type="text"
+                  placeholder="Cari UID, Buyer, Supplier…"
+                  value={searchLedger}
+                  onChange={(e) => setSearchLedger(e.target.value)}
+                  style={{
+                    background: "var(--surface-sub)",
+                    border: "1px solid var(--border)",
+                    borderRadius: 8,
+                    padding: "6px 12px",
+                    fontSize: 13,
+                    color: "var(--text)",
+                    outline: "none",
+                  }}
+                />
+
+                {/* Filter Tabs */}
+                <div className="bn-tabs-nav">
+                  <button
+                    className={`bn-tab-button ${ledgerFilter === "ALL" ? "active" : ""}`}
+                    onClick={() => setLedgerFilter("ALL")}
+                  >
+                    Semua
+                  </button>
+                  <button
+                    className={`bn-tab-button ${ledgerFilter === "CONFIRMED" ? "active" : ""}`}
+                    onClick={() => setLedgerFilter("CONFIRMED")}
+                  >
+                    ✓ Valid
+                  </button>
+                  <button
+                    className={`bn-tab-button ${ledgerFilter === "FINANCED" ? "active" : ""}`}
+                    onClick={() => setLedgerFilter("FINANCED")}
+                  >
+                    ◆ Financed
+                  </button>
+                  <button
+                    className={`bn-tab-button ${ledgerFilter === "MISMATCH" ? "active" : ""}`}
+                    onClick={() => setLedgerFilter("MISMATCH")}
+                  >
+                    ⚠ Mismatch
+                  </button>
+                  <button
+                    className={`bn-tab-button ${ledgerFilter === "REVOKED" ? "active" : ""}`}
+                    onClick={() => setLedgerFilter("REVOKED")}
+                  >
+                    ✕ Revoked
+                  </button>
+                </div>
+              </div>
             </div>
-            <Link href="/verify" className="btn sm">
-              Lihat Seluruhnya →
-            </Link>
+
+            {/* Binance-style Ledger Table */}
+            <div className="bn-table-responsive">
+              <table className="bn-table">
+                <thead>
+                  <tr>
+                    <th>Dokumen / UID</th>
+                    <th>Pembeli (Issuer)</th>
+                    <th>Supplier (Subjek)</th>
+                    <th>Invoice Hash (SHA-256)</th>
+                    <th>Status On-Chain</th>
+                    <th>Waktu</th>
+                    <th style={{ textAlign: "right" }}>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredAttestations.map((a) => (
+                    <tr key={a.uid}>
+                      {/* Document Ref & UID */}
+                      <td>
+                        <div style={{ fontWeight: 700, color: "var(--text)" }}>{a.refNo}</div>
+                        <div style={{ fontFamily: "monospace", fontSize: 11, color: "var(--muted)" }}>
+                          {a.uid.slice(0, 14)}…
+                        </div>
+                      </td>
+
+                      {/* Buyer */}
+                      <td>
+                        <div className="bn-org-cell">
+                          <div className="bn-org-icon">🏢</div>
+                          <div>
+                            <div style={{ fontWeight: 600 }}>{a.issuer}</div>
+                            <div style={{ fontFamily: "monospace", fontSize: 11, color: "var(--muted)" }}>
+                              {a.issuerWallet.slice(0, 6)}…{a.issuerWallet.slice(-4)}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Supplier */}
+                      <td>
+                        <div style={{ fontWeight: 600 }}>{a.supplierName}</div>
+                        <Link
+                          href={`/passport/${encodeURIComponent(a.subjectId)}`}
+                          style={{ fontSize: 11, color: "var(--blue)" }}
+                        >
+                          Lihat Passport →
+                        </Link>
+                      </td>
+
+                      {/* Hash */}
+                      <td>
+                        <code
+                          className="mono small"
+                          title={a.invoiceHash}
+                          style={{
+                            background: "var(--surface-sub)",
+                            padding: "2px 6px",
+                            borderRadius: 4,
+                            cursor: "pointer",
+                          }}
+                          onClick={() => {
+                            navigator.clipboard?.writeText(a.invoiceHash);
+                            alert("Hash tersalin!");
+                          }}
+                        >
+                          {a.invoiceHash.slice(0, 10)}…{a.invoiceHash.slice(-8)} 📋
+                        </code>
+                      </td>
+
+                      {/* Status */}
+                      <td>
+                        {a.payeeMismatch ? (
+                          <span className="bn-badge bn-badge-mismatch">⚠ PAYEE MISMATCH</span>
+                        ) : a.status === "CONFIRMED" ? (
+                          <span className="bn-badge bn-badge-valid">✓ CONFIRMED</span>
+                        ) : a.status === "FINANCED" ? (
+                          <span className="bn-badge bn-badge-financed">◆ FINANCED</span>
+                        ) : a.status === "REVOKED" ? (
+                          <span className="bn-badge bn-badge-revoked">✕ REVOKED</span>
+                        ) : (
+                          <span className="bn-badge">{a.status}</span>
+                        )}
+                      </td>
+
+                      {/* Date */}
+                      <td style={{ color: "var(--muted)", whiteSpace: "nowrap" }}>
+                        {a.issuedAt}
+                      </td>
+
+                      {/* Actions */}
+                      <td style={{ textAlign: "right", whiteSpace: "nowrap" }}>
+                        <Link
+                          href={`/verify/${encodeURIComponent(a.uid)}`}
+                          className="btn sm"
+                          style={{ marginRight: 6, fontSize: 12, padding: "4px 10px" }}
+                        >
+                          Verifikasi
+                        </Link>
+                        <a
+                          href={`${ARBITRUM_SEPOLIA_EXPLORER}/tx/${a.txHash}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          style={{ color: "var(--blue)", fontSize: 12, textDecoration: "none" }}
+                          title="Lihat Transaksi di Arbiscan Sepolia"
+                        >
+                          Arbiscan ↗
+                        </a>
+                      </td>
+                    </tr>
+                  ))}
+                  {filteredAttestations.length === 0 && (
+                    <tr>
+                      <td colSpan={7} style={{ textAlign: "center", padding: "36px", color: "var(--muted)" }}>
+                        Tidak ada attestation yang sesuai dengan kriteria filter.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. BINANCE-STYLE PRODUCT ECOSYSTEM GRID */}
+      <section className="lexi-two-products">
+        <div className="container">
+          <div className="center" style={{ marginBottom: 48 }}>
+            <span className="pill" style={{ marginBottom: 12 }}>
+              Ekosistem Solusi Terintegrasi
+            </span>
+            <h2 style={{ fontSize: "clamp(26px, 3vw, 36px)", margin: "0 0 10px", fontWeight: 800 }}>
+              Satu Protokol<span className="dot-cyan">,</span> Seluruh Pemangku Kepentingan Bisnis
+            </h2>
+            <p className="muted" style={{ maxWidth: 640, margin: "0 auto" }}>
+              Tidak perlu mengubah format invoice atau ERP Anda — BizProof menyematkan verifikasi kriptografis portabel
+              pada tagihan harian.
+            </p>
           </div>
 
-          <div className="grid2">
-            {mockAttestations.slice(0, 4).map((a) => (
-              <AttestationCard key={a.uid} a={a} href={`/verify/${encodeURIComponent(a.uid)}`} />
-            ))}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 20 }}>
+            {/* Card 1: Enterprise Buyer */}
+            <div className="bn-step-card">
+              <div style={{ fontSize: 28, marginBottom: 12 }}>🏢</div>
+              <div className="bn-step-title">Enterprise Buyer Portal</div>
+              <div className="bn-step-desc" style={{ marginBottom: 16 }}>
+                Alur persetujuan tagihan multi-tier, zero gas fee via relayer otomatis, dan log audit anti-manipulasi
+                yang melindungi korporasi dari vendor fiktif.
+              </div>
+              <Link href="/app/overview" style={{ color: "var(--blue)", fontWeight: 600, fontSize: 13 }}>
+                Buka Portal Buyer →
+              </Link>
+            </div>
+
+            {/* Card 2: Lender Engine */}
+            <div className="bn-step-card">
+              <div style={{ fontSize: 28, marginBottom: 12 }}>🏦</div>
+              <div className="bn-step-title">Lender Verifier Engine</div>
+              <div className="bn-step-desc" style={{ marginBottom: 16 }}>
+                Mesin verifikasi massal, webhook status konfirmasi, dan registry FINANCED yang melindungi bank
+                dari penipuan double-pledge invoice.
+              </div>
+              <Link href="/lender/verify" style={{ color: "var(--blue)", fontWeight: 600, fontSize: 13 }}>
+                Portal Bank & Fintek →
+              </Link>
+            </div>
+
+            {/* Card 3: Supplier Passport */}
+            <div className="bn-step-card">
+              <div style={{ fontSize: 28, marginBottom: 12 }}>📈</div>
+              <div className="bn-step-title">Supplier Passport</div>
+              <div className="bn-step-desc" style={{ marginBottom: 16 }}>
+                Rekam jejak performa pembayaran terkonfirmasi yang portabel untuk membuka akses pembiayaan SCF
+                dengan bunga lebih murah dan pencairan lebih cepat.
+              </div>
+              <Link href="/passport/sup_karyawaha_001" style={{ color: "var(--blue)", fontWeight: 600, fontSize: 13 }}>
+                Lihat Contoh Passport →
+              </Link>
+            </div>
+
+            {/* Card 4: Payee Lock */}
+            <div className="bn-step-card">
+              <div style={{ fontSize: 28, marginBottom: 12 }}>🔒</div>
+              <div className="bn-step-title">Payee Lock Protection</div>
+              <div className="bn-step-desc" style={{ marginBottom: 16 }}>
+                Mengunci salted hash rekening bank tujuan pembayaran ke dalam smart contract untuk mendeteksi
+                upaya pengalihan dana ke rekening pribadi sales.
+              </div>
+              <Link href="/docs" style={{ color: "var(--blue)", fontWeight: 600, fontSize: 13 }}>
+                Pelajari Mekanisme →
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. 4-STEP PROCESS (HOW IT WORKS) */}
+      <section className="bn-process-section">
+        <div className="container">
+          <div className="center" style={{ marginBottom: 48 }}>
+            <span className="pill" style={{ marginBottom: 12 }}>
+              Alur Kerja 4 Langkah
+            </span>
+            <h2 style={{ fontSize: "clamp(26px, 3vw, 36px)", margin: "0 0 10px", fontWeight: 800 }}>
+              Dari Dokumen Menjadi Bukti Sah di Blockchain<span className="dot-cyan">.</span>
+            </h2>
           </div>
 
-          <div className="alert info small" style={{ marginTop: 32 }}>
-            <strong>Catatan Transparansi Kriptografi:</strong> {t.honesty}
+          <div className="bn-process-grid">
+            <div className="bn-step-card">
+              <div className="bn-step-number">1</div>
+              <div className="bn-step-title">Hash Dokumen</div>
+              <div className="bn-step-desc">
+                Supplier menghitung salted hash SHA-256 invoice di browser. File fisik tetap berada di perangkat lokal.
+              </div>
+            </div>
+
+            <div className="bn-step-card">
+              <div className="bn-step-number">2</div>
+              <div className="bn-step-title">Konfirmasi Pembeli</div>
+              <div className="bn-step-desc">
+                Enterprise Buyer memvalidasi penerimaan barang dan rekening bank, lalu menyetujui invoice.
+              </div>
+            </div>
+
+            <div className="bn-step-card">
+              <div className="bn-step-number">3</div>
+              <div className="bn-step-title">Pencatatan Arbitrum</div>
+              <div className="bn-step-desc">
+                Attestation terdaftar secara permanen di smart contract Arbitrum Sepolia dengan EAS standard.
+              </div>
+            </div>
+
+            <div className="bn-step-card">
+              <div className="bn-step-number">4</div>
+              <div className="bn-step-title">Pencairan Dana</div>
+              <div className="bn-step-desc">
+                Lender/Bank memverifikasi attestation secara instan dan menandai status FINANCED untuk cegah double-financing.
+              </div>
+            </div>
+          </div>
+
+          {/* SAFU Security & Cryptographic Trust Banner */}
+          <div className="bn-safu-card">
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <span style={{ fontSize: 24 }}>🛡️</span>
+              <h3 style={{ margin: 0, fontSize: 20, fontWeight: 800 }}>
+                Arsitektur Keamanan & Privasi Kriptografis
+              </h3>
+            </div>
+            <p style={{ color: "#94a3b8", margin: "8px 0 0", maxWidth: 700, fontSize: 14 }}>
+              BizProof dirancang dengan standar privasi ketat untuk memenuhi regulasi UU PDP dan kepatuhan perbankan.
+            </p>
+
+            <div className="bn-safu-grid">
+              <div className="bn-safu-item">
+                <h4>Zero Raw File Storage</h4>
+                <p>Dokumen fisik invoice tidak pernah dikirim ke blockchain atau server publik. Privasi bisnis 100% terjaga.</p>
+              </div>
+
+              <div className="bn-safu-item">
+                <h4>Salted SHA-256 Hashing</h4>
+                <p>Setiap dokumen dan rekening bayar di-hash dengan random salt untuk mencegah serangan brute force pada nominal tagihan.</p>
+              </div>
+
+              <div className="bn-safu-item">
+                <h4>Independen & Abadi</h4>
+                <p>Bukti konfirmasi tercatat di Arbitrum L2. Verifikasi tetap dapat dilakukan independen meski platform BizProof offline.</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
