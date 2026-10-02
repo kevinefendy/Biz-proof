@@ -1325,26 +1325,12 @@ a {
   font-weight: 600;
 }
 
-/* Binance Hero Section */
+/* Hero Section (Solid Dark Navy, Clean & Flat, No Gradients) */
 .bn-hero-section {
   position: relative;
-  background: radial-gradient(circle at 50% 10%, rgba(30, 80, 255, 0.18) 0%, rgba(11, 20, 38, 0.98) 75%), #080f1e;
-  padding: 80px 0 60px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  overflow: hidden;
-}
-
-.bn-hero-glow-orb {
-  position: absolute;
-  top: -120px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 700px;
-  height: 380px;
-  background: radial-gradient(ellipse, rgba(37, 99, 235, 0.28) 0%, transparent 70%);
-  filter: blur(60px);
-  pointer-events: none;
-  z-index: 1;
+  background: var(--navy);
+  padding: 72px 0 52px;
+  border-bottom: 1px solid var(--border);
 }
 
 .bn-hero-content {
@@ -1359,37 +1345,30 @@ a {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(30, 80, 255, 0.12);
-  border: 1px solid rgba(96, 165, 250, 0.35);
-  color: #93c5fd;
+  background: var(--primary-subtle);
+  border: 1px solid var(--primary-border);
+  color: var(--primary);
   font-size: 13px;
   font-weight: 600;
-  padding: 5px 14px;
-  border-radius: 9999px;
-  margin-bottom: 24px;
-  backdrop-filter: blur(8px);
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  margin-bottom: 20px;
 }
 
 .bn-hero-title {
-  font-size: clamp(34px, 5vw, 56px);
+  font-size: clamp(32px, 4.5vw, 52px);
   font-weight: 900;
-  line-height: 1.12;
+  line-height: 1.15;
   letter-spacing: -0.03em;
   color: #ffffff;
-  margin: 0 0 20px;
-}
-
-.bn-hero-title .gradient-text {
-  background: linear-gradient(135deg, #60a5fa 0%, #38bdf8 50%, #ffffff 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  margin: 0 0 16px;
 }
 
 .bn-hero-desc {
-  font-size: clamp(16px, 2vw, 19px);
+  font-size: clamp(15px, 1.8vw, 17px);
   color: #94a3b8;
-  max-width: 740px;
-  margin: 0 auto 36px;
+  max-width: 700px;
+  margin: 0 auto 32px;
   line-height: 1.6;
 }
 

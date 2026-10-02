@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useApp } from "@/components/AppProvider";
 import { dict } from "@/lib/i18n";
 import VerifyInputBox from "@/components/VerifyInputBox";
-import { mockAttestations, ARBISCAN_BASE } from "@/lib/mock";
+import { mockAttestations } from "@/lib/mock";
 import { ARBITRUM_SEPOLIA_EXPLORER } from "@/lib/contracts/bizproof";
 
 type LedgerFilter = "ALL" | "CONFIRMED" | "FINANCED" | "MISMATCH" | "REVOKED";
@@ -17,16 +17,13 @@ export default function Home() {
   const [ledgerFilter, setLedgerFilter] = useState<LedgerFilter>("ALL");
   const [searchLedger, setSearchLedger] = useState("");
 
-  // Filter attestation ledger data
   const filteredAttestations = useMemo(() => {
     return mockAttestations.filter((a) => {
-      // Filter tab
       if (ledgerFilter === "CONFIRMED" && a.status !== "CONFIRMED") return false;
       if (ledgerFilter === "FINANCED" && a.status !== "FINANCED") return false;
       if (ledgerFilter === "MISMATCH" && !a.payeeMismatch) return false;
       if (ledgerFilter === "REVOKED" && a.status !== "REVOKED") return false;
 
-      // Filter search
       if (searchLedger.trim()) {
         const query = searchLedger.toLowerCase();
         const matchUid = a.uid.toLowerCase().includes(query);
@@ -42,9 +39,8 @@ export default function Home() {
 
   return (
     <div className="full-bleed">
-      {/* 1. HERO SECTION WITH FLAT STATS RIBBON (NO CARDS) */}
+      {/* 1. HERO SECTION (SOLID COLOR, NO GRADIENT ORBS, NO EMOJIS) */}
       <section className="bn-hero-section">
-        <div className="bn-hero-glow-orb" />
         <div className="container bn-hero-content">
           <div className="bn-hero-badge">
             <span className="bn-pulse-dot" />
@@ -52,9 +48,9 @@ export default function Home() {
           </div>
 
           <h1 className="bn-hero-title">
-            Bukti <span className="gradient-text">Konfirmasi Pembeli</span>
+            Bukti Konfirmasi Pembeli
             <br />
-            untuk Tagihan Bisnis.
+            <span style={{ color: "var(--primary)" }}>untuk Tagihan Bisnis.</span>
           </h1>
 
           <p className="bn-hero-desc">
@@ -94,7 +90,7 @@ export default function Home() {
                 Insiden Double-Pledge <span className="bn-stat-trend">0</span>
               </div>
               <div className="bn-stat-number">Nol Kasus</div>
-              <div className="bn-stat-note">Dicegah registry hash unik on-chain</div>
+              <div className="bn-stat-note">Dicegah registry hash tunggal on-chain</div>
             </div>
 
             <div className="bn-stat-col">
@@ -111,14 +107,14 @@ export default function Home() {
       {/* 2. UNIFIED SEARCH & VERIFICATION SANDBOX */}
       <section className="lexi-verify-section" id="verify-sandbox">
         <div className="container">
-          <div className="center" style={{ marginBottom: 28 }}>
-            <span className="pill" style={{ marginBottom: 10 }}>
+          <div className="center" style={{ marginBottom: 24 }}>
+            <span className="pill" style={{ marginBottom: 8 }}>
               Verifikasi Publik Terbuka
             </span>
-            <h2 style={{ fontSize: "clamp(24px, 3vw, 32px)", margin: "0 0 8px", fontWeight: 800 }}>
-              Periksa Keabsahan Tagihan & Rekening Bayar<span className="dot-cyan">.</span>
+            <h2 style={{ fontSize: "clamp(22px, 2.5vw, 28px)", margin: "0 0 6px", fontWeight: 800 }}>
+              Periksa Keabsahan Tagihan & Rekening Bayar
             </h2>
-            <p className="muted" style={{ maxWidth: 640, margin: "0 auto" }}>
+            <p className="muted" style={{ maxWidth: 640, margin: "0 auto", fontSize: 13 }}>
               Ketik UID attestation atau uji dokumen invoice Anda. File fisik tetap tersimpan di laptop Anda; browser hanya
               mencocokkan sidik jari SHA-256 yang sudah dibubuhi salt acak.
             </p>
@@ -130,20 +126,18 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 3. ATTESTATION LEDGER TABLE */}
+      {/* 3. ATTESTATION LEDGER TABLE (NO CARDS - CLEAN FLAT LEDGER) */}
       <section className="bn-ledger-section">
         <div className="container">
           <div className="bn-ledger-container">
             {/* Table Header & Tabs */}
             <div className="bn-ledger-header">
               <div className="bn-ledger-title-group">
-                <h2>
-                  Buku Besar Attestation Terkonfirmasi<span className="dot-cyan">.</span>
-                </h2>
+                <h2>Buku Besar Attestation Terkonfirmasi</h2>
                 <p>Data transaksi on-chain tersinkronisasi dengan Arbitrum Sepolia Testnet.</p>
               </div>
 
-              <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                 {/* Search in Ledger */}
                 <input
                   type="text"
@@ -153,8 +147,8 @@ export default function Home() {
                   style={{
                     background: "var(--surface-sub)",
                     border: "1px solid var(--border)",
-                    borderRadius: 6,
-                    padding: "5px 12px",
+                    borderRadius: "var(--radius-sm)",
+                    padding: "5px 10px",
                     fontSize: 12,
                     color: "var(--text)",
                     outline: "none",
@@ -173,25 +167,25 @@ export default function Home() {
                     className={`bn-tab-button ${ledgerFilter === "CONFIRMED" ? "active" : ""}`}
                     onClick={() => setLedgerFilter("CONFIRMED")}
                   >
-                    ✓ Valid
+                    Valid
                   </button>
                   <button
                     className={`bn-tab-button ${ledgerFilter === "FINANCED" ? "active" : ""}`}
                     onClick={() => setLedgerFilter("FINANCED")}
                   >
-                    ◆ Financed
+                    Financed
                   </button>
                   <button
                     className={`bn-tab-button ${ledgerFilter === "MISMATCH" ? "active" : ""}`}
                     onClick={() => setLedgerFilter("MISMATCH")}
                   >
-                    ⚠ Mismatch
+                    Mismatch
                   </button>
                   <button
                     className={`bn-tab-button ${ledgerFilter === "REVOKED" ? "active" : ""}`}
                     onClick={() => setLedgerFilter("REVOKED")}
                   >
-                    ✕ Revoked
+                    Revoked
                   </button>
                 </div>
               </div>
@@ -224,14 +218,9 @@ export default function Home() {
 
                       {/* Buyer */}
                       <td>
-                        <div className="bn-org-cell">
-                          <div className="bn-org-icon">🏢</div>
-                          <div>
-                            <div style={{ fontWeight: 600 }}>{a.issuer}</div>
-                            <div style={{ fontFamily: "monospace", fontSize: 11, color: "var(--muted)" }}>
-                              {a.issuerWallet.slice(0, 6)}…{a.issuerWallet.slice(-4)}
-                            </div>
-                          </div>
+                        <div style={{ fontWeight: 600 }}>{a.issuer}</div>
+                        <div style={{ fontFamily: "monospace", fontSize: 11, color: "var(--muted)" }}>
+                          {a.issuerWallet.slice(0, 6)}…{a.issuerWallet.slice(-4)}
                         </div>
                       </td>
 
@@ -262,20 +251,20 @@ export default function Home() {
                             alert("Hash tersalin!");
                           }}
                         >
-                          {a.invoiceHash.slice(0, 10)}…{a.invoiceHash.slice(-8)} 📋
+                          {a.invoiceHash.slice(0, 10)}…{a.invoiceHash.slice(-8)}
                         </code>
                       </td>
 
                       {/* Status */}
                       <td>
                         {a.payeeMismatch ? (
-                          <span className="bn-badge bn-badge-mismatch">⚠ PAYEE MISMATCH</span>
+                          <span className="bn-badge bn-badge-mismatch">PAYEE MISMATCH</span>
                         ) : a.status === "CONFIRMED" ? (
-                          <span className="bn-badge bn-badge-valid">✓ CONFIRMED</span>
+                          <span className="bn-badge bn-badge-valid">CONFIRMED</span>
                         ) : a.status === "FINANCED" ? (
-                          <span className="bn-badge bn-badge-financed">◆ FINANCED</span>
+                          <span className="bn-badge bn-badge-financed">FINANCED</span>
                         ) : a.status === "REVOKED" ? (
-                          <span className="bn-badge bn-badge-revoked">✕ REVOKED</span>
+                          <span className="bn-badge bn-badge-revoked">REVOKED</span>
                         ) : (
                           <span className="bn-badge">{a.status}</span>
                         )}
@@ -309,7 +298,7 @@ export default function Home() {
                   ))}
                   {filteredAttestations.length === 0 && (
                     <tr>
-                      <td colSpan={7} style={{ textAlign: "center", padding: "36px", color: "var(--muted)" }}>
+                      <td colSpan={7} style={{ textAlign: "center", padding: "32px", color: "var(--muted)" }}>
                         Tidak ada attestation yang sesuai dengan kriteria filter.
                       </td>
                     </tr>
@@ -322,16 +311,16 @@ export default function Home() {
       </section>
 
       {/* 4. TOOLS BY ROLE (MINIMAL ROW LAYOUT, NO CHUNKY BOXES) */}
-      <section style={{ padding: "64px 0", background: "var(--surface)" }}>
+      <section style={{ padding: "56px 0", background: "var(--surface)" }}>
         <div className="container">
-          <div className="center" style={{ marginBottom: 36 }}>
-            <span className="pill" style={{ marginBottom: 10 }}>
+          <div className="center" style={{ marginBottom: 32 }}>
+            <span className="pill" style={{ marginBottom: 8 }}>
               Alat Kerja Menurut Peran
             </span>
-            <h2 style={{ fontSize: "clamp(24px, 3vw, 32px)", margin: "0 0 8px", fontWeight: 800 }}>
-              Satu Bukti Konfirmasi<span className="dot-cyan">,</span> Beda Kebutuhan Akses
+            <h2 style={{ fontSize: "clamp(22px, 2.5vw, 28px)", margin: "0 0 6px", fontWeight: 800 }}>
+              Satu Bukti Konfirmasi, Beda Kebutuhan Akses
             </h2>
-            <p className="muted" style={{ maxWidth: 640, margin: "0 auto" }}>
+            <p className="muted" style={{ maxWidth: 640, margin: "0 auto", fontSize: 13 }}>
               Anda tidak perlu mengganti software akuntansi atau format PDF invoice. Kami hanya menyematkan bukti
               persetujuan pembeli ke jaringan Arbitrum.
             </p>
@@ -340,7 +329,6 @@ export default function Home() {
           <div className="bn-roles-grid">
             {/* Role 1: Enterprise Buyer */}
             <div className="bn-role-row">
-              <div className="bn-role-icon">🏢</div>
               <div>
                 <div className="bn-role-title">Portal Pembeli Enterprise</div>
                 <div className="bn-role-desc">
@@ -355,7 +343,6 @@ export default function Home() {
 
             {/* Role 2: Lender Engine */}
             <div className="bn-role-row">
-              <div className="bn-role-icon">🏦</div>
               <div>
                 <div className="bn-role-title">Mesin Verifier Bank & SCF</div>
                 <div className="bn-role-desc">
@@ -370,7 +357,6 @@ export default function Home() {
 
             {/* Role 3: Supplier Passport */}
             <div className="bn-role-row">
-              <div className="bn-role-icon">📈</div>
               <div>
                 <div className="bn-role-title">Supplier Passport</div>
                 <div className="bn-role-desc">
@@ -385,7 +371,6 @@ export default function Home() {
 
             {/* Role 4: Payee Lock */}
             <div className="bn-role-row">
-              <div className="bn-role-icon">🔒</div>
               <div>
                 <div className="bn-role-title">Payee Lock Protection</div>
                 <div className="bn-role-desc">
@@ -402,14 +387,14 @@ export default function Home() {
       </section>
 
       {/* 5. WORKFLOW TIMELINE (PURE FLOW, NO BOX CARDS) */}
-      <section style={{ padding: "64px 0", background: "var(--bg)", borderTop: "1px solid var(--border)" }}>
+      <section style={{ padding: "56px 0", background: "var(--bg)", borderTop: "1px solid var(--border)" }}>
         <div className="container">
-          <div className="center" style={{ marginBottom: 36 }}>
-            <span className="pill" style={{ marginBottom: 10 }}>
+          <div className="center" style={{ marginBottom: 32 }}>
+            <span className="pill" style={{ marginBottom: 8 }}>
               Alur Kerja Nyata
             </span>
-            <h2 style={{ fontSize: "clamp(24px, 3vw, 32px)", margin: "0 0 8px", fontWeight: 800 }}>
-              Dari Faktur Fisik Sampai Pencairan Dana<span className="dot-cyan">.</span>
+            <h2 style={{ fontSize: "clamp(22px, 2.5vw, 28px)", margin: "0 0 6px", fontWeight: 800 }}>
+              Dari Faktur Fisik Sampai Pencairan Dana
             </h2>
           </div>
 
@@ -450,7 +435,7 @@ export default function Home() {
           {/* 6. OPEN 2-COLUMN TRUST SECTION (ZERO CARD-IN-CARD) */}
           <div className="bn-trust-section">
             <div className="bn-trust-intro">
-              <span className="pill" style={{ marginBottom: 12 }}>Keamanan Tanpa Kompromi</span>
+              <span className="pill" style={{ marginBottom: 10 }}>Keamanan Tanpa Kompromi</span>
               <h3>Prinsip Privasi & Batasan Teknis yang Jujur</h3>
               <p>
                 Kami percaya transparansi arsitektur jauh lebih berguna daripada sekadar janji pemasaran.

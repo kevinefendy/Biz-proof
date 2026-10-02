@@ -22,32 +22,30 @@ export default function Header() {
 
   return (
     <>
-      {/* Binance-style Realtime Ticker Bar */}
+      {/* Realtime Network Bar (Flat & Minimal) */}
       <div className="bn-ticker-bar">
         <div className="container bn-ticker-inner">
           <div className="bn-ticker-left">
             <span className="bn-pulse-dot" />
-            <span>
-              <span className="bn-ticker-tag">LIVE TESTNET</span> Arbitrum Sepolia (421614)
-            </span>
+            <span>Arbitrum Sepolia (421614)</span>
             <span style={{ color: "rgba(255,255,255,0.2)" }}>|</span>
-            <span style={{ color: "#94a3b8" }}>Avg Block: <strong>0.25s</strong></span>
+            <span style={{ color: "var(--muted)" }}>Avg Block: 0.25s</span>
             <span style={{ color: "rgba(255,255,255,0.2)" }}>|</span>
-            <span style={{ color: "#94a3b8" }}>Gas: <strong>&lt; $0.001</strong></span>
+            <span style={{ color: "var(--muted)" }}>Gas: &lt; $0.001</span>
           </div>
 
           <div className="bn-ticker-metrics">
             <span className="bn-ticker-metric">
-              Volume: <strong>Rp 48.2M+</strong>
+              Volume: Rp 48.2M+
             </span>
             <span className="bn-ticker-metric">
-              Attestation: <strong>1,420+</strong>
+              Attestation: 1,420+
             </span>
             <a
               href={ARBITRUM_SEPOLIA_EXPLORER}
               target="_blank"
               rel="noreferrer"
-              style={{ color: "#60a5fa", textDecoration: "none" }}
+              style={{ color: "var(--primary)", textDecoration: "none" }}
             >
               Arbiscan ↗
             </a>
@@ -58,7 +56,7 @@ export default function Header() {
       <header className="header">
         <div className="container header-inner">
           <Link href="/" className="brand" aria-label="BizProof Home">
-            <span className="brand-mark">◈</span> BizProof<span className="dot-cyan">.</span>
+            <span className="brand-mark">◈</span> BizProof
           </Link>
 
           <nav className="nav">
@@ -70,19 +68,18 @@ export default function Header() {
           </nav>
 
           <div className="header-actions">
-            {/* Web3 Wallet Connection Button */}
+            {/* Web3 Wallet Connection Button (Solid Color, No Emojis, No Gradients) */}
             {!account ? (
               <button
                 className="bn-btn-primary"
                 style={{
                   fontSize: 13,
                   padding: "7px 16px",
-                  borderRadius: 8,
+                  borderRadius: 6,
                 }}
                 onClick={connectWallet}
                 disabled={isConnecting}
               >
-                <span>🦊</span>
                 {isConnecting ? "Menghubungkan…" : "Connect Wallet"}
               </button>
             ) : !isCorrectNetwork ? (
@@ -94,12 +91,12 @@ export default function Header() {
                   border: "1px solid #ffa39e",
                   fontWeight: 600,
                   fontSize: 12,
-                  borderRadius: 8,
+                  borderRadius: 6,
                 }}
                 onClick={switchToArbitrum}
-                title="Klik untuk beralih ke Arbitrum Sepolia"
+                title="Beralih ke Arbitrum Sepolia"
               >
-                ⚠ Switch to Arb Sepolia
+                Switch to Arbitrum Sepolia
               </button>
             ) : (
               <div
@@ -107,10 +104,10 @@ export default function Header() {
                   display: "inline-flex",
                   alignItems: "center",
                   gap: 8,
-                  background: "rgba(15, 23, 42, 0.8)",
-                  border: "1px solid rgba(59, 130, 246, 0.3)",
+                  background: "var(--surface)",
+                  border: "1px solid var(--border)",
                   padding: "5px 10px",
-                  borderRadius: 8,
+                  borderRadius: 6,
                   fontSize: 12,
                 }}
               >
@@ -121,18 +118,17 @@ export default function Header() {
                     height: 7,
                     borderRadius: "50%",
                     backgroundColor: "#10b981",
-                    boxShadow: "0 0 6px #10b981",
                   }}
                   title="Arbitrum Sepolia Connected"
                 />
-                <span style={{ color: "#94a3b8", fontSize: 11 }}>
+                <span style={{ color: "var(--muted)", fontSize: 11 }}>
                   {balance ? `${balance} ETH` : "Arb Sepolia"}
                 </span>
                 <span
                   style={{
                     fontFamily: "monospace",
                     fontWeight: 700,
-                    color: "#ffffff",
+                    color: "var(--text)",
                   }}
                 >
                   {shortAddress(account)}
@@ -145,7 +141,7 @@ export default function Header() {
                     background: "transparent",
                     border: "none",
                     cursor: "pointer",
-                    color: "#94a3b8",
+                    color: "var(--muted)",
                     padding: "0 2px",
                     fontSize: 13,
                     lineHeight: 1,
@@ -161,7 +157,7 @@ export default function Header() {
               onClick={() => setLang(lang === "id" ? "en" : "id")}
               title="Ganti Bahasa / Switch Language"
             >
-              {lang === "id" ? "ID | EN" : "EN | ID"}
+              {lang === "id" ? "ID" : "EN"}
             </button>
 
             <button
@@ -169,8 +165,9 @@ export default function Header() {
               onClick={() => setTheme(theme === "light" ? "dark" : "light")}
               aria-label="Toggle theme"
               title={theme === "light" ? "Mode Gelap" : "Mode Terang"}
+              style={{ fontSize: 12, fontWeight: 600 }}
             >
-              {theme === "light" ? "🌙" : "☀️"}
+              {theme === "light" ? "DARK" : "LIGHT"}
             </button>
 
             <Link href="/login" className="btn-cta">

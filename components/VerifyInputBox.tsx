@@ -36,36 +36,35 @@ export default function VerifyInputBox({ compact = false }: { compact?: boolean 
       style={{
         background: "var(--surface)",
         border: "1px solid var(--border)",
-        borderRadius: 16,
-        padding: compact ? "16px" : "24px",
-        boxShadow: "0 8px 30px rgba(0,0,0,0.06)",
+        borderRadius: "var(--radius)",
+        padding: compact ? "14px" : "20px",
       }}
     >
       {!compact && (
-        <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
+        <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
           <button
             type="button"
             className="bn-tab-button"
             style={{
-              background: activeTab === "id" ? "rgba(37, 99, 235, 0.12)" : "transparent",
-              color: activeTab === "id" ? "var(--blue)" : "var(--muted)",
-              border: activeTab === "id" ? "1px solid rgba(59, 130, 246, 0.3)" : "1px solid transparent",
+              background: activeTab === "id" ? "var(--primary-subtle)" : "transparent",
+              color: activeTab === "id" ? "var(--primary)" : "var(--muted)",
+              border: activeTab === "id" ? "1px solid var(--primary-border)" : "1px solid transparent",
             }}
             onClick={() => setActiveTab("id")}
           >
-            🔍 Cari via UID / Nomor Invoice
+            Cari via UID / Nomor Invoice
           </button>
           <button
             type="button"
             className="bn-tab-button"
             style={{
-              background: activeTab === "file" ? "rgba(37, 99, 235, 0.12)" : "transparent",
-              color: activeTab === "file" ? "var(--blue)" : "var(--muted)",
-              border: activeTab === "file" ? "1px solid rgba(59, 130, 246, 0.3)" : "1px solid transparent",
+              background: activeTab === "file" ? "var(--primary-subtle)" : "transparent",
+              color: activeTab === "file" ? "var(--primary)" : "var(--muted)",
+              border: activeTab === "file" ? "1px solid var(--primary-border)" : "1px solid transparent",
             }}
             onClick={() => setActiveTab("file")}
           >
-            📄 Unggah File (Browser SHA-256)
+            Hitung Hash Dokumen (SHA-256)
           </button>
         </div>
       )}
@@ -81,16 +80,14 @@ export default function VerifyInputBox({ compact = false }: { compact?: boolean 
             alignItems: "center",
             background: "var(--surface-sub)",
             border: "1px solid var(--border)",
-            borderRadius: 12,
-            padding: "6px 8px 6px 16px",
-            transition: "all 0.2s ease",
+            borderRadius: "var(--radius-sm)",
+            padding: "4px 6px 4px 14px",
           }}
         >
-          <span style={{ color: "var(--muted)", marginRight: 10, fontSize: 16 }}>🔍</span>
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder={compact ? "Masukkan UID / Hash…" : "Masukkan Attestation UID, nomor tagihan, atau invoiceHash (0x…)"}
+            placeholder={compact ? "Masukkan UID / Hash…" : "Ketik UID attestation, nomor invoice, atau hash (0x…)"}
             aria-label="Attestation ID"
             style={{
               flex: 1,
@@ -98,7 +95,7 @@ export default function VerifyInputBox({ compact = false }: { compact?: boolean 
               border: "none",
               outline: "none",
               color: "var(--text)",
-              fontSize: 14,
+              fontSize: 13,
               fontFamily: "inherit",
             }}
           />
@@ -112,7 +109,7 @@ export default function VerifyInputBox({ compact = false }: { compact?: boolean 
                 color: "var(--muted)",
                 cursor: "pointer",
                 padding: "4px 8px",
-                fontSize: 14,
+                fontSize: 12,
               }}
             >
               ✕
@@ -122,9 +119,9 @@ export default function VerifyInputBox({ compact = false }: { compact?: boolean 
             type="submit"
             className="bn-btn-primary"
             style={{
-              padding: "10px 20px",
-              fontSize: 14,
-              borderRadius: 8,
+              padding: "8px 18px",
+              fontSize: 13,
+              borderRadius: "var(--radius-sm)",
               whiteSpace: "nowrap",
             }}
           >
@@ -136,39 +133,38 @@ export default function VerifyInputBox({ compact = false }: { compact?: boolean 
           <label
             className="drop"
             style={{
-              border: "2px dashed var(--border)",
-              borderRadius: 12,
-              padding: "28px 20px",
+              border: "1px dashed var(--border)",
+              borderRadius: "var(--radius-sm)",
+              padding: "24px 16px",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              gap: 8,
+              gap: 6,
               cursor: "pointer",
               background: "var(--surface-sub)",
             }}
           >
             <input type="file" hidden onChange={(e) => onFile(e.target.files?.[0])} />
-            <span style={{ fontSize: 28 }}>📑</span>
-            <strong style={{ color: "var(--text)" }}>
+            <strong style={{ color: "var(--text)", fontSize: 14 }}>
               {isHashing ? "Menghitung Hash Kriptografis…" : "Pilih File Invoice (PDF / XML)"}
             </strong>
-            <span className="muted small" style={{ textAlign: "center", maxWidth: 460 }}>
-              Hash SHA-256 + salt dihitung secara aman di peramban Anda. Dokumen mentah tidak pernah diunggah ke internet.
+            <span className="muted small" style={{ textAlign: "center", maxWidth: 440 }}>
+              Hash SHA-256 + salt dihitung secara lokal di browser Anda. Dokumen fisik tidak pernah keluar dari komputer.
             </span>
           </label>
         </div>
       )}
 
       {fileInfo && (
-        <div className="alert info small" style={{ marginTop: 12, borderRadius: 8 }}>
+        <div className="alert info small" style={{ marginTop: 10, borderRadius: "var(--radius-sm)" }}>
           <strong>Hasil Hash Lokal:</strong> <code className="mono">{fileInfo}</code>
         </div>
       )}
 
       {!compact && (
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 16, flexWrap: "wrap" }}>
-          <span style={{ color: "var(--muted)", fontSize: 12, fontWeight: 600 }}>Contoh Siap Tes:</span>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 14, flexWrap: "wrap" }}>
+          <span style={{ color: "var(--muted)", fontSize: 11, fontWeight: 600 }}>Sampel Cepat:</span>
           <button
             type="button"
             className="bn-badge bn-badge-valid"
@@ -176,7 +172,7 @@ export default function VerifyInputBox({ compact = false }: { compact?: boolean 
             style={{ cursor: "pointer" }}
             title="Tes Attestation Sah"
           >
-            ✓ att_01 (Valid)
+            att_01 (Valid)
           </button>
           <button
             type="button"
@@ -185,7 +181,7 @@ export default function VerifyInputBox({ compact = false }: { compact?: boolean 
             style={{ cursor: "pointer" }}
             title="Tes Anomali Rekening Pembayaran"
           >
-            ⚠ att_03 (Payee Mismatch)
+            att_03 (Payee Mismatch)
           </button>
           <button
             type="button"
@@ -194,7 +190,7 @@ export default function VerifyInputBox({ compact = false }: { compact?: boolean 
             style={{ cursor: "pointer" }}
             title="Tes Attestation Dibatalkan"
           >
-            ✕ att_04 (Revoked)
+            att_04 (Revoked)
           </button>
         </div>
       )}
