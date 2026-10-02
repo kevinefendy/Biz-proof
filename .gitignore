@@ -5,4 +5,5 @@ out/
 .DS_Store
 tsconfig.tsbuildinfo
 template-fe-arbitrum-workshop/
+anti-ai-slop-writing-main/
 .env*.local

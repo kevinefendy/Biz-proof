@@ -53,22 +53,22 @@ export default function Home() {
           </div>
 
           <h1 className="bn-hero-title">
-            Protokol <span className="gradient-text">Konfirmasi Invoice</span>
+            Bukti <span className="gradient-text">Konfirmasi Pembeli</span>
             <br />
-            Terdesentralisasi.
+            untuk Tagihan Bisnis.
           </h1>
 
           <p className="bn-hero-desc">
-            Verifikasi keabsahan piutang bisnis dalam hitungan detik. Lindungi perbankan dan korporasi dari
-            risiko <strong>invoice fiktif</strong>, <strong>double financing</strong>, dan pengalihan rekening sales secara instan.
+            Cek keabsahan piutang usaha langsung di blockchain dalam hitungan detik. Tanpa telepon bolak-balik ke
+            purchasing buyer, dan invoice yang sama terkunci dari upaya penjaminan ganda ke bank lain.
           </p>
 
           <div className="bn-hero-actions">
             <a href="#verify-sandbox" className="bn-btn-primary">
-              ⚡ Coba Verifikasi Gratis
+              Cek Tagihan Sekarang
             </a>
             <Link href="/app/overview" className="bn-btn-outline">
-              🏢 Jelajahi Portal Buyer →
+              Portal Pembeli Enterprise →
             </Link>
           </div>
 
@@ -89,25 +89,25 @@ export default function Home() {
                 <span className="bn-stat-trend">Live</span>
               </div>
               <div className="bn-stat-value">Rp 48.2 M</div>
-              <div className="bn-stat-sub">Total nilai tagihan terkonfirmasi</div>
+              <div className="bn-stat-sub">Nilai invoice yang disetujui pembeli</div>
             </div>
 
             <div className="bn-stat-card">
               <div className="bn-stat-header">
-                <span className="bn-stat-title">Pencegahan Double-Financing</span>
-                <span className="bn-stat-trend">100%</span>
+                <span className="bn-stat-title">Insiden Double-Pledge</span>
+                <span className="bn-stat-trend">0</span>
               </div>
-              <div className="bn-stat-value">0 Insiden</div>
-              <div className="bn-stat-sub">Registry hash unik on-chain</div>
+              <div className="bn-stat-value">Nol Kasus</div>
+              <div className="bn-stat-sub">Dicegah registry hash tunggal on-chain</div>
             </div>
 
             <div className="bn-stat-card">
               <div className="bn-stat-header">
-                <span className="bn-stat-title">Kecepatan Verifikasi</span>
+                <span className="bn-stat-title">Waktu Cek</span>
                 <span className="bn-stat-trend">&lt; $0.001</span>
               </div>
               <div className="bn-stat-value">&lt; 1 Detik</div>
-              <div className="bn-stat-sub">Client hashing + Arbitrum RPC</div>
+              <div className="bn-stat-sub">Query RPC node tanpa biaya gas</div>
             </div>
           </div>
         </div>
@@ -118,13 +118,14 @@ export default function Home() {
         <div className="container">
           <div className="center" style={{ marginBottom: 32 }}>
             <span className="pill" style={{ marginBottom: 12 }}>
-              Mesin Verifikasi Bebas Hambatan
+              Verifikasi Publik Terbuka
             </span>
             <h2 style={{ fontSize: "clamp(26px, 3vw, 36px)", margin: "0 0 10px", fontWeight: 800 }}>
-              Cek Keaslian Tagihan & Rekening<span className="dot-cyan">.</span>
+              Periksa Keabsahan Tagihan & Rekening Bayar<span className="dot-cyan">.</span>
             </h2>
-            <p className="muted" style={{ maxWidth: 600, margin: "0 auto" }}>
-              Masukkan UID attestation atau uji file invoice Anda secara aman. File tidak pernah meninggalkan peramban.
+            <p className="muted" style={{ maxWidth: 640, margin: "0 auto" }}>
+              Ketik UID attestation atau uji dokumen invoice Anda. File fisik tetap tersimpan di laptop Anda; browser hanya
+              mencocokkan sidik jari SHA-256 yang sudah dibubuhi salt acak.
             </p>
           </div>
 
@@ -325,19 +326,19 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. BINANCE-STYLE PRODUCT ECOSYSTEM GRID */}
+      {/* 4. PRODUCT TOOLS BY ROLE */}
       <section className="lexi-two-products">
         <div className="container">
           <div className="center" style={{ marginBottom: 48 }}>
             <span className="pill" style={{ marginBottom: 12 }}>
-              Ekosistem Solusi Terintegrasi
+              Alat Kerja Menurut Peran
             </span>
             <h2 style={{ fontSize: "clamp(26px, 3vw, 36px)", margin: "0 0 10px", fontWeight: 800 }}>
-              Satu Protokol<span className="dot-cyan">,</span> Seluruh Pemangku Kepentingan Bisnis
+              Satu Bukti Konfirmasi<span className="dot-cyan">,</span> Beda Kebutuhan Akses
             </h2>
             <p className="muted" style={{ maxWidth: 640, margin: "0 auto" }}>
-              Tidak perlu mengubah format invoice atau ERP Anda — BizProof menyematkan verifikasi kriptografis portabel
-              pada tagihan harian.
+              Anda tidak perlu mengganti software akuntansi atau format PDF invoice. Kami hanya menyematkan bukti
+              persetujuan pembeli ke jaringan Arbitrum.
             </p>
           </div>
 
@@ -345,23 +346,23 @@ export default function Home() {
             {/* Card 1: Enterprise Buyer */}
             <div className="bn-step-card">
               <div style={{ fontSize: 28, marginBottom: 12 }}>🏢</div>
-              <div className="bn-step-title">Enterprise Buyer Portal</div>
+              <div className="bn-step-title">Portal Pembeli Enterprise</div>
               <div className="bn-step-desc" style={{ marginBottom: 16 }}>
-                Alur persetujuan tagihan multi-tier, zero gas fee via relayer otomatis, dan log audit anti-manipulasi
-                yang melindungi korporasi dari vendor fiktif.
+                Atur kewenangan approver berdasarkan limit tagihan. Konfirmasi berjalan gasless via relayer, sementara
+                seluruh jejak persetujuan tersimpan permanen.
               </div>
               <Link href="/app/overview" style={{ color: "var(--blue)", fontWeight: 600, fontSize: 13 }}>
-                Buka Portal Buyer →
+                Buka Portal Pembeli →
               </Link>
             </div>
 
             {/* Card 2: Lender Engine */}
             <div className="bn-step-card">
               <div style={{ fontSize: 28, marginBottom: 12 }}>🏦</div>
-              <div className="bn-step-title">Lender Verifier Engine</div>
+              <div className="bn-step-title">Mesin Verifier Bank & SCF</div>
               <div className="bn-step-desc" style={{ marginBottom: 16 }}>
-                Mesin verifikasi massal, webhook status konfirmasi, dan registry FINANCED yang melindungi bank
-                dari penipuan double-pledge invoice.
+                Pemeriksaan massal via REST API. Begitu pinjaman disetujui, tandai status FINANCED agar invoice yang
+                sama tidak bisa dijaminkan ke bank lain.
               </div>
               <Link href="/lender/verify" style={{ color: "var(--blue)", fontWeight: 600, fontSize: 13 }}>
                 Portal Bank & Fintek →
@@ -373,8 +374,8 @@ export default function Home() {
               <div style={{ fontSize: 28, marginBottom: 12 }}>📈</div>
               <div className="bn-step-title">Supplier Passport</div>
               <div className="bn-step-desc" style={{ marginBottom: 16 }}>
-                Rekam jejak performa pembayaran terkonfirmasi yang portabel untuk membuka akses pembiayaan SCF
-                dengan bunga lebih murah dan pencairan lebih cepat.
+                Portofolio rekam jejak pembayaran yang sudah diakui pembeli resmi. Tunjukkan link ini ke calon klien baru
+                atau lembaga pembiayaan piutang.
               </div>
               <Link href="/passport/sup_karyawaha_001" style={{ color: "var(--blue)", fontWeight: 600, fontSize: 13 }}>
                 Lihat Contoh Passport →
@@ -386,8 +387,8 @@ export default function Home() {
               <div style={{ fontSize: 28, marginBottom: 12 }}>🔒</div>
               <div className="bn-step-title">Payee Lock Protection</div>
               <div className="bn-step-desc" style={{ marginBottom: 16 }}>
-                Mengunci salted hash rekening bank tujuan pembayaran ke dalam smart contract untuk mendeteksi
-                upaya pengalihan dana ke rekening pribadi sales.
+                Kunci nomor rekening bank penerima dalam hash sebelum dicatat. Jika tagihan dialihkan ke rekening pribadi
+                sales, sistem langsung memunculkan tanda bahaya.
               </div>
               <Link href="/docs" style={{ color: "var(--blue)", fontWeight: 600, fontSize: 13 }}>
                 Pelajari Mekanisme →
@@ -402,73 +403,78 @@ export default function Home() {
         <div className="container">
           <div className="center" style={{ marginBottom: 48 }}>
             <span className="pill" style={{ marginBottom: 12 }}>
-              Alur Kerja 4 Langkah
+              Alur Kerja Nyata
             </span>
             <h2 style={{ fontSize: "clamp(26px, 3vw, 36px)", margin: "0 0 10px", fontWeight: 800 }}>
-              Dari Dokumen Menjadi Bukti Sah di Blockchain<span className="dot-cyan">.</span>
+              Dari Faktur Fisik Sampai Pencairan Dana<span className="dot-cyan">.</span>
             </h2>
           </div>
 
           <div className="bn-process-grid">
             <div className="bn-step-card">
               <div className="bn-step-number">1</div>
-              <div className="bn-step-title">Hash Dokumen</div>
+              <div className="bn-step-title">Hitung Hash di Browser</div>
               <div className="bn-step-desc">
-                Supplier menghitung salted hash SHA-256 invoice di browser. File fisik tetap berada di perangkat lokal.
+                Supplier membuat komitmen SHA-256 dan salt acak dari berkas tagihan. File fisik tetap di laptop; tidak ada data mentah yang diunggah.
               </div>
             </div>
 
             <div className="bn-step-card">
               <div className="bn-step-number">2</div>
-              <div className="bn-step-title">Konfirmasi Pembeli</div>
+              <div className="bn-step-title">Persetujuan Pembeli</div>
               <div className="bn-step-desc">
-                Enterprise Buyer memvalidasi penerimaan barang dan rekening bank, lalu menyetujui invoice.
+                Tim purchasing atau keuangan pembeli memvalidasi penerimaan barang, memastikan nomor rekening tujuan, lalu menandatangani attestation.
               </div>
             </div>
 
             <div className="bn-step-card">
               <div className="bn-step-number">3</div>
-              <div className="bn-step-title">Pencatatan Arbitrum</div>
+              <div className="bn-step-title">Catat ke Arbitrum L2</div>
               <div className="bn-step-desc">
-                Attestation terdaftar secara permanen di smart contract Arbitrum Sepolia dengan EAS standard.
+                Bukti tersimpan permanen di smart contract Arbitrum Sepolia dengan format EAS. Dokumen ini tidak bisa dihapus atau diedit sepihak.
               </div>
             </div>
 
             <div className="bn-step-card">
               <div className="bn-step-number">4</div>
-              <div className="bn-step-title">Pencairan Dana</div>
+              <div className="bn-step-title">Verifikasi & Cairkan Dana</div>
               <div className="bn-step-desc">
-                Lender/Bank memverifikasi attestation secara instan dan menandai status FINANCED untuk cegah double-financing.
+                Bank mengecek keabsahan klaim dalam satu detik dan mengunci status FINANCED on-chain sebelum mencairkan kredit SCF.
               </div>
             </div>
           </div>
 
-          {/* SAFU Security & Cryptographic Trust Banner */}
+          {/* SAFU Trust & Honesty Box (4 items, anti rule-of-three, grounded honesty) */}
           <div className="bn-safu-card">
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <span style={{ fontSize: 24 }}>🛡️</span>
               <h3 style={{ margin: 0, fontSize: 20, fontWeight: 800 }}>
-                Arsitektur Keamanan & Privasi Kriptografis
+                Prinsip Privasi & Batasan Teknis yang Jujur
               </h3>
             </div>
             <p style={{ color: "#94a3b8", margin: "8px 0 0", maxWidth: 700, fontSize: 14 }}>
-              BizProof dirancang dengan standar privasi ketat untuk memenuhi regulasi UU PDP dan kepatuhan perbankan.
+              Kami percaya transparansi arsitektur jauh lebih berguna daripada sekadar janji pemasaran.
             </p>
 
-            <div className="bn-safu-grid">
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 20, marginTop: 24 }}>
               <div className="bn-safu-item">
-                <h4>Zero Raw File Storage</h4>
-                <p>Dokumen fisik invoice tidak pernah dikirim ke blockchain atau server publik. Privasi bisnis 100% terjaga.</p>
+                <h4>Nol Berkas Mentah di Server</h4>
+                <p>BizProof tidak menyimpan salinan PDF atau rincian item barang. Kami hanya mencatat sidik jari hash kriptografis.</p>
               </div>
 
               <div className="bn-safu-item">
-                <h4>Salted SHA-256 Hashing</h4>
-                <p>Setiap dokumen dan rekening bayar di-hash dengan random salt untuk mencegah serangan brute force pada nominal tagihan.</p>
+                <h4>Salt Acak per Dokumen</h4>
+                <p>Nominal invoice dan nomor rekening dilindungi salt acak unik agar tidak bisa ditebak melalui brute-force rainbow table.</p>
               </div>
 
               <div className="bn-safu-item">
-                <h4>Independen & Abadi</h4>
-                <p>Bukti konfirmasi tercatat di Arbitrum L2. Verifikasi tetap dapat dilakukan independen meski platform BizProof offline.</p>
+                <h4>Bebas Ketergantungan Server</h4>
+                <p>Bila server BizProof padam, bukti konfirmasi tetap ada di Arbitrum dan bisa diverifikasi mandiri lewat node blockchain.</p>
+              </div>
+
+              <div className="bn-safu-item">
+                <h4>Batasan Kasus Kolusi</h4>
+                <p>Jika pembeli dan supplier sengaja bersekongkol membuat faktur fiktif bersama, attestation tetap tercatat valid. Protokol membuktikan siapa yang menyetujui, bukan kebenaran mutlak isi transaksi.</p>
               </div>
             </div>
           </div>
