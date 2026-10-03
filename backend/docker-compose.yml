@@ -1,0 +1,18 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: bizproof-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: bizproof
+      MYSQL_USER: bizproof
+      MYSQL_PASSWORD: bizproof
+    ports:
+      - "3306:3306"
+    volumes:
+      - bizproof-mysql:/var/lib/mysql
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+
+volumes:
+  bizproof-mysql:

@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
-import { hashFile } from "@/lib/hash";
+import { hashFile, hashInvoiceWithSalt } from "@/lib/hash";
+import { submitInvoiceToBackend } from "@/lib/api";
 
 export default function NewInvoice() {
   const [out, setOut] = useState<string | null>(null);
@@ -30,8 +31,23 @@ export default function NewInvoice() {
             const f = e.target.files?.[0];
             if (!f) return;
             const { fileHash, salt, invoiceHash } = await hashFile(f);
+            const payeeHash = await hashInvoiceWithSalt(payee, salt);
+            let backendMsg = "→ backend belum dihubungi";
+            try {
+              const saved = await submitInvoiceToBackend({
+                supplier_org_id: "sup_karyawaha_001",
+                buyer_org_id: buyer,
+                ref_no: ref,
+                invoice_hash: invoiceHash,
+                payee_hash: payeeHash,
+                salt,
+              });
+              backendMsg = `→ tersimpan di backend: id=${saved.id} status=${saved.status}`;
+            } catch (err) {
+              backendMsg = `→ backend tidak terjangkau (pastikan npm run dev di backend/): ${err instanceof Error ? err.message : err}`;
+            }
             setOut(
-              `buyer=${buyer}\nref=${ref}\nfile=${f.name} (${f.size} bytes)\nSHA-256(file)=${fileHash}\nsalt=${salt}\ninvoiceHash(salted)=${invoiceHash}\n→ kirim ke POST /v1/invoices (mock, belum ada backend)`
+              `buyer=${buyer}\nref=${ref}\nfile=${f.name} (${f.size} bytes)\nSHA-256(file)=${fileHash}\nsalt=${salt}\ninvoiceHash(salted)=${invoiceHash}\npayeeHash(salted)=${payeeHash}\n${backendMsg}`
             );
           }}
         />

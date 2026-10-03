@@ -36,6 +36,9 @@
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "backend",
+    "template-fe-arbitrum-workshop",
+    "anti-ai-slop-writing-main"
   ]
 }

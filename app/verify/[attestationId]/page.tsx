@@ -51,8 +51,39 @@ export default function VerifyDetail({ params }: { params: Promise<{ attestation
     setTimeout(() => setCopied(false), 2000);
   }
 
-  // Tentukan data tampilan utama (prioritas onchain jika ditemukan, jika tidak pakai mock)
-  const a = mockData;
+  // Tentukan data tampilan utama (prioritas on-chain jika ditemukan, jika tidak pakai mock)
+  // PRD §7.3: verifikasi independen tanpa bergantung server BizProof.
+  const onChainStatusLabel =
+    onChainData != null ? OnChainStatus[onChainData.status] : null;
+  const a = onChainData
+    ? {
+        uid: onChainData.uid,
+        issuer: onChainData.issuer,
+        issuerWallet: onChainData.issuer,
+        subjectId: onChainData.subjectId,
+        supplierName: mockData?.supplierName ?? "Supplier Terverifikasi",
+        schemaId: mockData?.schemaId ?? "INVOICE_CONFIRMED",
+        invoiceHash: onChainData.invoiceHash,
+        payeeHash: onChainData.payeeHash,
+        refNo: mockData?.refNo ?? "INV-ONCHAIN",
+        issuedAt: new Date(onChainData.issuedAt * 1000).toLocaleString(),
+        expiresAt:
+          mockData?.expiresAt ??
+          (onChainData.expiresAt === 0 ? null : new Date(onChainData.expiresAt * 1000).toLocaleString()),
+        status: (onChainStatusLabel === "Confirmed"
+          ? "CONFIRMED"
+          : onChainStatusLabel === "Revoked"
+            ? "REVOKED"
+            : onChainStatusLabel === "Financed"
+              ? "FINANCED"
+              : onChainStatusLabel === "Settled"
+                ? "SETTLED"
+                : "CONFIRMED") as NonNullable<typeof mockData>["status"],
+        txHash: mockData?.txHash ?? "",
+        revokeReason: mockData?.revokeReason,
+        payeeMismatch: mockData?.payeeMismatch ?? false,
+      }
+    : mockData;
 
   return (
     <div style={{ maxWidth: 900, margin: "0 auto", paddingBottom: 60 }}>
@@ -179,11 +210,6 @@ export default function VerifyDetail({ params }: { params: Promise<{ attestation
                 href={`${ARBITRUM_SEPOLIA_EXPLORER}/tx/${a?.txHash || id}`}
                 target="_blank"
                 rel="noreferrer"
-                style={{
-                  background: "linear-gradient(135deg, #1b3574 0%, #2854b7 100%)",
-                  border: "1px solid rgba(110, 168, 254, 0.4)",
-                  color: "#fff",
-                }}
               >
                 Lihat di Arbiscan Sepolia ↗
               </a>

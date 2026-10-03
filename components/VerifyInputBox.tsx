@@ -52,7 +52,7 @@ export default function VerifyInputBox({ compact = false }: { compact?: boolean 
             }}
             onClick={() => setActiveTab("id")}
           >
-            Cari via UID / Nomor Invoice
+            {t.v_tab_id}
           </button>
           <button
             type="button"
@@ -64,7 +64,7 @@ export default function VerifyInputBox({ compact = false }: { compact?: boolean 
             }}
             onClick={() => setActiveTab("file")}
           >
-            Hitung Hash Dokumen (SHA-256)
+            {t.v_tab_file}
           </button>
         </div>
       )}
@@ -87,7 +87,7 @@ export default function VerifyInputBox({ compact = false }: { compact?: boolean 
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder={compact ? "Masukkan UID / Hash…" : "Ketik UID attestation, nomor invoice, atau hash (0x…)"}
+            placeholder={compact ? t.v_ph_short : t.v_ph}
             aria-label="Attestation ID"
             style={{
               flex: 1,
@@ -147,10 +147,10 @@ export default function VerifyInputBox({ compact = false }: { compact?: boolean 
           >
             <input type="file" hidden onChange={(e) => onFile(e.target.files?.[0])} />
             <strong style={{ color: "var(--text)", fontSize: 14 }}>
-              {isHashing ? "Menghitung Hash Kriptografis…" : "Pilih File Invoice (PDF / XML)"}
+              {isHashing ? t.v_hashing : t.v_drop_t}
             </strong>
             <span className="muted small" style={{ textAlign: "center", maxWidth: 440 }}>
-              Hash SHA-256 + salt dihitung secara lokal di browser Anda. Dokumen fisik tidak pernah keluar dari komputer.
+              {t.v_drop_d}
             </span>
           </label>
         </div>
@@ -158,13 +158,13 @@ export default function VerifyInputBox({ compact = false }: { compact?: boolean 
 
       {fileInfo && (
         <div className="alert info small" style={{ marginTop: 10, borderRadius: "var(--radius-sm)" }}>
-          <strong>Hasil Hash Lokal:</strong> <code className="mono">{fileInfo}</code>
+          <strong>{t.v_hash_result}</strong> <code className="mono">{fileInfo}</code>
         </div>
       )}
 
       {!compact && (
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 14, flexWrap: "wrap" }}>
-          <span style={{ color: "var(--muted)", fontSize: 11, fontWeight: 600 }}>Sampel Cepat:</span>
+          <span style={{ color: "var(--muted)", fontSize: 11, fontWeight: 600 }}>{t.v_samples}</span>
           <button
             type="button"
             className="bn-badge bn-badge-valid"

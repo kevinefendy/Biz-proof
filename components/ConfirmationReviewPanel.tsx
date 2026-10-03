@@ -6,9 +6,10 @@ import StatusBadge from "./StatusBadge";
 import PayeeMismatchAlert from "./PayeeMismatchAlert";
 import { useWeb3 } from "./Web3Provider";
 import { attestOnChain } from "@/lib/web3";
+import { confirmInvoiceBackend, rejectInvoiceBackend, recordAttestationBackend } from "@/lib/api";
 import { ARBITRUM_SEPOLIA_EXPLORER } from "@/lib/contracts/bizproof";
 
-export default function ConfirmationReviewPanel({ a }: { a: Attestation }) {
+export default function ConfirmationReviewPanel({ a, backendId }: { a: Attestation; backendId?: string }) {
   const { account, isCorrectNetwork, connectWallet, switchToArbitrum } = useWeb3();
   const [decision, setDecision] = useState<string | null>(null);
   const [reason, setReason] = useState("");
@@ -16,6 +17,23 @@ export default function ConfirmationReviewPanel({ a }: { a: Attestation }) {
   const [txHash, setTxHash] = useState<string | null>(null);
   const [onChainUid, setOnChainUid] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  async function handleReject() {
+    if (!reason.trim()) {
+      setDecision("REJECTED — Harap isi alasan penolakan");
+      return;
+    }
+    if (backendId) {
+      try {
+        await rejectInvoiceBackend(backendId, reason.trim());
+        setDecision(`REJECTED via backend — Alasan: ${reason.trim()}`);
+      } catch (err: any) {
+        setErrorMessage(err?.message || "Gagal reject via backend.");
+      }
+      return;
+    }
+    setDecision(`REJECTED — Alasan: ${reason}`);
+  }
 
   async function handleOnChainAttest() {
     setErrorMessage(null);
@@ -33,6 +51,41 @@ export default function ConfirmationReviewPanel({ a }: { a: Attestation }) {
 
     try {
       setIsOnChainLoading(true);
+
+      // Jalur backend dulu bila invoice berasal dari backend:
+      // - mode relayer → backend yang attest (gasless), langsung dapat uid+txHash
+      // - mode client-sign → backend kembalikan params bytes32, frontend yang sign via wallet
+      if (backendId) {
+        const br = await confirmInvoiceBackend(backendId, { subjectId: a.subjectId });
+        if (br.mode === "relayer" && br.txHash && br.uid) {
+          setTxHash(br.txHash);
+          setOnChainUid(br.uid);
+          setDecision("CONFIRMED via backend relayer (gasless) — attestation tercatat di Arbitrum Sepolia!");
+          return;
+        }
+        if (br.mode === "client-sign" && br.params) {
+          const res = await attestOnChain({
+            subjectId: br.params.subjectId,
+            schemaId: br.params.schemaId,
+            invoiceHash: br.params.invoiceHash,
+            payeeHash: br.params.payeeHash,
+            expiresAt: br.params.expiresAt,
+          });
+          setTxHash(res.txHash);
+          setOnChainUid(res.uid);
+          // Laporkan kembali ke backend agar mirror + status invoice terupdate
+          // (kegagalan lapor tidak membatalkan sukses on-chain).
+          try {
+            await recordAttestationBackend({ invoice_id: backendId, uid: res.uid, tx_hash: res.txHash });
+            setDecision("CONFIRMED ON-CHAIN + tercatat di backend — Transaksi sukses!");
+          } catch {
+            setDecision("CONFIRMED ON-CHAIN — Transaksi sukses dicatat di Arbitrum Sepolia! (mirror backend gagal, cek koneksi)");
+          }
+          return;
+        }
+        throw new Error("Respons backend tidak dikenal.");
+      }
+
       const res = await attestOnChain({
         subjectId: a.subjectId,
         invoiceHash: a.invoiceHash,
@@ -98,8 +151,6 @@ export default function ConfirmationReviewPanel({ a }: { a: Attestation }) {
             <button
               className="btn primary"
               style={{
-                background: "linear-gradient(135deg, #1b3574 0%, #2854b7 100%)",
-                border: "1px solid rgba(110, 168, 254, 0.4)",
                 padding: "10px 16px",
                 fontWeight: 700,
               }}
@@ -129,9 +180,7 @@ export default function ConfirmationReviewPanel({ a }: { a: Attestation }) {
               </button>
               <button
                 className="btn danger sm"
-                onClick={() =>
-                  setDecision(reason ? `REJECTED — Alasan: ${reason}` : "REJECTED — Harap isi alasan penolakan")
-                }
+                onClick={handleReject}
               >
                 Reject Invoice
               </button>

@@ -7,3 +7,8 @@ tsconfig.tsbuildinfo
 template-fe-arbitrum-workshop/
 anti-ai-slop-writing-main/
 .env*.local
+backend/.env
+backend/dist/
+backend/artifacts/
+backend/cache/
+backend/typechain-types/

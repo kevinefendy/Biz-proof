@@ -1,0 +1,84 @@
+-- BizProof off-chain schema (MySQL 8) — PRD v3.0 §9
+CREATE TABLE IF NOT EXISTS organizations (
+  id VARCHAR(64) PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  type ENUM('buyer','supplier','lender') NOT NULL,
+  wallet VARCHAR(42) NULL,
+  verified_status VARCHAR(32) NOT NULL DEFAULT 'unverified',
+  plan VARCHAR(32) NOT NULL DEFAULT 'free',
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS users (
+  id VARCHAR(64) PRIMARY KEY,
+  org_id VARCHAR(64) NOT NULL,
+  role VARCHAR(64) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (org_id) REFERENCES organizations(id)
+);
+
+CREATE TABLE IF NOT EXISTS invoices (
+  id VARCHAR(64) PRIMARY KEY,
+  supplier_org_id VARCHAR(64) NOT NULL,
+  buyer_org_id VARCHAR(64) NOT NULL,
+  ref_no VARCHAR(128) NOT NULL,
+  status VARCHAR(32) NOT NULL DEFAULT 'PENDING_CONFIRMATION',
+  invoice_hash CHAR(64) NOT NULL,
+  payee_hash CHAR(64) NOT NULL,
+  salt VARCHAR(128) NOT NULL,
+  payload_encrypted TEXT NULL,
+  submitted_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_invoice_hash (invoice_hash),
+  FOREIGN KEY (supplier_org_id) REFERENCES organizations(id),
+  FOREIGN KEY (buyer_org_id) REFERENCES organizations(id)
+);
+
+CREATE TABLE IF NOT EXISTS confirmations (
+  id VARCHAR(64) PRIMARY KEY,
+  invoice_id VARCHAR(64) NOT NULL,
+  decided_by VARCHAR(64) NULL,
+  decision ENUM('CONFIRMED','REJECTED') NULL,
+  reason TEXT NULL,
+  decided_at TIMESTAMP NULL,
+  FOREIGN KEY (invoice_id) REFERENCES invoices(id)
+);
+
+CREATE TABLE IF NOT EXISTS attestations (
+  id VARCHAR(64) PRIMARY KEY,
+  onchain_uid VARCHAR(66) NOT NULL UNIQUE,
+  invoice_id VARCHAR(64) NOT NULL,
+  tx_hash VARCHAR(66) NOT NULL,
+  status VARCHAR(32) NOT NULL DEFAULT 'CONFIRMED',
+  issued_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  revoked_at TIMESTAMP NULL,
+  revoke_reason TEXT NULL,
+  FOREIGN KEY (invoice_id) REFERENCES invoices(id)
+);
+
+CREATE TABLE IF NOT EXISTS api_keys (
+  id VARCHAR(64) PRIMARY KEY,
+  org_id VARCHAR(64) NOT NULL,
+  key_hash CHAR(64) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (org_id) REFERENCES organizations(id)
+);
+
+CREATE TABLE IF NOT EXISTS webhooks (
+  id VARCHAR(64) PRIMARY KEY,
+  org_id VARCHAR(64) NOT NULL,
+  url TEXT NOT NULL,
+  events TEXT NOT NULL,
+  secret VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (org_id) REFERENCES organizations(id)
+);
+
+CREATE TABLE IF NOT EXISTS audit_log (
+  id VARCHAR(64) PRIMARY KEY,
+  org_id VARCHAR(64) NOT NULL,
+  actor_id VARCHAR(64) NOT NULL,
+  action VARCHAR(128) NOT NULL,
+  target VARCHAR(255) NOT NULL,
+  at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
